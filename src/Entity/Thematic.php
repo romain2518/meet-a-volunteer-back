@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ThematicRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +39,16 @@ class Thematic
      * @ORM\Column(type="date", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Experience::class, mappedBy="thematic")
+     */
+    private $experiences;
+
+    public function __construct()
+    {
+        $this->experiences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -87,6 +99,33 @@ class Thematic
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Experience>
+     */
+    public function getExperiences(): Collection
+    {
+        return $this->experiences;
+    }
+
+    public function addExperience(Experience $experience): self
+    {
+        if (!$this->experiences->contains($experience)) {
+            $this->experiences[] = $experience;
+            $experience->addThematic($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperience(Experience $experience): self
+    {
+        if ($this->experiences->removeElement($experience)) {
+            $experience->removeThematic($this);
+        }
 
         return $this;
     }

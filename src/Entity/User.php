@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -92,6 +94,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * 
      */
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="userSender")
+     */
+    private $sentMessages;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="userReceiver")
+     */
+    private $receivedMessages;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Experience::class, mappedBy="user")
+     */
+    private $experiences;
+
+    public function __construct()
+    {
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
+        $this->experiences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -310,6 +334,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getSentMessages(): Collection
+    {
+        return $this->sentMessages;
+    }
+
+    public function addSentMessage(Message $sentMessage): self
+    {
+        if (!$this->sentMessages->contains($sentMessage)) {
+            $this->sentMessages[] = $sentMessage;
+            $sentMessage->setUserSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSentMessage(Message $sentMessage): self
+    {
+        if ($this->sentMessages->removeElement($sentMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($sentMessage->getUserSender() === $this) {
+                $sentMessage->setUserSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Message $receivedMessage): self
+    {
+        if (!$this->receivedMessages->contains($receivedMessage)) {
+            $this->receivedMessages[] = $receivedMessage;
+            $receivedMessage->setUserReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedMessage(Message $receivedMessage): self
+    {
+        if ($this->receivedMessages->removeElement($receivedMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($receivedMessage->getUserReceiver() === $this) {
+                $receivedMessage->setUserReceiver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Experience>
+     */
+    public function getExperiences(): Collection
+    {
+        return $this->experiences;
+    }
+
+    public function addExperience(Experience $experience): self
+    {
+        if (!$this->experiences->contains($experience)) {
+            $this->experiences[] = $experience;
+            $experience->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperience(Experience $experience): self
+    {
+        if ($this->experiences->removeElement($experience)) {
+            // set the owning side to null (unless already changed)
+            if ($experience->getUser() === $this) {
+                $experience->setUser(null);
+            }
+        }
 
         return $this;
     }

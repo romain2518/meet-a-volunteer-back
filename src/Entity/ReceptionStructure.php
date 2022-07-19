@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReceptionStructureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +39,16 @@ class ReceptionStructure
      * @ORM\Column(type="datetime", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Experience::class, mappedBy="receptionStructure")
+     */
+    private $experiences;
+
+    public function __construct()
+    {
+        $this->experiences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -87,6 +99,36 @@ class ReceptionStructure
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Experience>
+     */
+    public function getExperiences(): Collection
+    {
+        return $this->experiences;
+    }
+
+    public function addExperience(Experience $experience): self
+    {
+        if (!$this->experiences->contains($experience)) {
+            $this->experiences[] = $experience;
+            $experience->setReceptionStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperience(Experience $experience): self
+    {
+        if ($this->experiences->removeElement($experience)) {
+            // set the owning side to null (unless already changed)
+            if ($experience->getReceptionStructure() === $this) {
+                $experience->setReceptionStructure(null);
+            }
+        }
 
         return $this;
     }

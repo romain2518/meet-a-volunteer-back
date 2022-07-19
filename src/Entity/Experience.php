@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExperienceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -97,6 +99,32 @@ class Experience
      * @ORM\Column(type="date", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiences")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=VolunteeringType::class, inversedBy="experiences")
+     */
+    private $volunteeringType;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ReceptionStructure::class, inversedBy="experiences")
+     */
+    private $receptionStructure;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Thematic::class, inversedBy="experiences")
+     */
+    private $thematic;
+
+    public function __construct()
+    {
+        $this->thematic = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -279,6 +307,66 @@ class Experience
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getVolunteeringType(): ?VolunteeringType
+    {
+        return $this->volunteeringType;
+    }
+
+    public function setVolunteeringType(?VolunteeringType $volunteeringType): self
+    {
+        $this->volunteeringType = $volunteeringType;
+
+        return $this;
+    }
+
+    public function getReceptionStructure(): ?ReceptionStructure
+    {
+        return $this->receptionStructure;
+    }
+
+    public function setReceptionStructure(?ReceptionStructure $receptionStructure): self
+    {
+        $this->receptionStructure = $receptionStructure;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Thematic>
+     */
+    public function getThematic(): Collection
+    {
+        return $this->thematic;
+    }
+
+    public function addThematic(Thematic $thematic): self
+    {
+        if (!$this->thematic->contains($thematic)) {
+            $this->thematic[] = $thematic;
+        }
+
+        return $this;
+    }
+
+    public function removeThematic(Thematic $thematic): self
+    {
+        $this->thematic->removeElement($thematic);
 
         return $this;
     }

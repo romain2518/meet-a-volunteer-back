@@ -37,6 +37,18 @@ class Message
      */
     private $updatedAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="sentMessages")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $userSender;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="receivedMessages")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $userReceiver;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +98,30 @@ class Message
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUserSender(): ?User
+    {
+        return $this->userSender;
+    }
+
+    public function setUserSender(?User $userSender): self
+    {
+        $this->userSender = $userSender;
+
+        return $this;
+    }
+
+    public function getUserReceiver(): ?User
+    {
+        return $this->userReceiver;
+    }
+
+    public function setUserReceiver(?User $userReceiver): self
+    {
+        $this->userReceiver = $userReceiver;
 
         return $this;
     }
