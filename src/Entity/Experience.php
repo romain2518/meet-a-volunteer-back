@@ -99,13 +99,9 @@ class Experience
     private $city;
 
     /**
-     * @ORM\Column(type="date", columnDefinition="YEAR")
+     * @ORM\Column(type="integer")
      * 
      * @Assert\NotBlank
-     * @Assert\Range(
-     *      min = "-100 years",
-     *      max = "now"
-     * )
      * 
      * @Groups({
      *  "api_user_show",
@@ -342,12 +338,12 @@ class Experience
         return $this;
     }
 
-    public function getYear(): ?\DateTimeInterface
+    public function getYear(): ?int
     {
         return $this->year;
     }
 
-    public function setYear(\DateTimeInterface $year): self
+    public function setYear(int $year): self
     {
         $this->year = $year;
 

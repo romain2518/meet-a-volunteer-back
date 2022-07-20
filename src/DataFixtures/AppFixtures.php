@@ -77,6 +77,63 @@ class AppFixtures extends Fixture
         $thematics = [];
         
         //! User
+        //? Member
+        $user = new User();
+
+        $user->setPseudo('User');
+        $user->setPseudoSlug($this->slugger->slug($user->getPseudo()));
+        $user->setRoles(['ROLE_USER']);
+        $user->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
+        $user->setFirstname($faker->firstName());
+        $user->setLastname($faker->lastName());
+        $user->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
+        $user->setProfilePicture('0.jpg');
+        $user->setEmail($faker->email());
+        $user->setPhone($faker->phoneNumber());
+        $user->setBiography($faker->realText(random_int(10, 250)));
+        $user->setNativeCountry($faker->country());
+
+        $users[] = $user;
+        $manager->persist($user);
+
+        //? Moderator
+        $moderator = new User();
+
+        $moderator->setPseudo('Moderator');
+        $moderator->setPseudoSlug($this->slugger->slug($moderator->getPseudo()));
+        $moderator->setRoles(['ROLE_MODERATOR']);
+        $moderator->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
+        $moderator->setFirstname($faker->firstName());
+        $moderator->setLastname($faker->lastName());
+        $moderator->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
+        $moderator->setProfilePicture('0.jpg');
+        $moderator->setEmail($faker->email());
+        $moderator->setPhone($faker->phoneNumber());
+        $moderator->setBiography($faker->realText(random_int(10, 250)));
+        $moderator->setNativeCountry($faker->country());
+
+        $users[] = $moderator;
+        $manager->persist($moderator);
+
+        //? Member
+        $admin = new User();
+
+        $admin->setPseudo('Admin');
+        $admin->setPseudoSlug($this->slugger->slug($admin->getPseudo()));
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
+        $admin->setFirstname($faker->firstName());
+        $admin->setLastname($faker->lastName());
+        $admin->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
+        $admin->setProfilePicture('0.jpg');
+        $admin->setEmail($faker->email());
+        $admin->setPhone($faker->phoneNumber());
+        $admin->setBiography($faker->realText(random_int(10, 250)));
+        $admin->setNativeCountry($faker->country());
+
+        $users[] = $admin;
+        $manager->persist($admin);
+
         for ($i=1; $i <= 30; $i++) { 
             $user = new User();
 
@@ -90,7 +147,7 @@ class AppFixtures extends Fixture
             $user->setProfilePicture('0.jpg');
             $user->setEmail($faker->email());
             $user->setPhone($faker->phoneNumber());
-            $user->setBiography($faker->realText(random_int(0, 250)));
+            $user->setBiography($faker->realText(random_int(10, 250)));
             $user->setNativeCountry($faker->country());
 
             $users[] = $user;
@@ -159,7 +216,7 @@ class AppFixtures extends Fixture
                 $experience->setSlugTitle($this->slugger->slug($experience->getTitle()));
                 $experience->setCountry($faker->country());
                 $experience->setCity($faker->city());
-                $experience->setYear($faker->dateTimeBetween('-100 years', 'now'));
+                $experience->setYear(random_int(1900, 2022));
                 $experience->setDuration(new DateTime());
                 $experience->setFeedback($faker->realTextBetween(5, 1500));
                 $experience->setViews(random_int(0, 5000));
@@ -179,9 +236,16 @@ class AppFixtures extends Fixture
                 $experience->setVolunteeringType($volunteeringTypes[array_rand($volunteeringTypes)]);
                 $experience->setReceptionStructure($receptionStructures[array_rand($receptionStructures)]);
 
-                $thematicIndexes = array_rand($thematic, random_int(1, 17));
-                foreach ($thematicIndexes as $thematicIndex) {
-                    $experience->addThematic($thematics[$thematicIndex]);
+                $numberOfThematics = random_int(1, count($thematics));
+
+                if ($numberOfThematics !== 1) { // If we want more than one item, we need an array of key
+                    $thematicIndexes = array_rand($thematics, $numberOfThematics);
+
+                    foreach ($thematicIndexes as $thematicIndex) {
+                        $experience->addThematic($thematics[$thematicIndex]);
+                    }
+                } else {
+                    $experience->addThematic($thematics[array_rand($thematics, 1)]);
                 }
 
                 $manager->persist($experience);
