@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -19,16 +21,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * 
+     * @Assert\Unique
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 30
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $pseudo;
 
     /**
      * @ORM\Column(type="json")
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $roles = [];
 
@@ -40,58 +72,165 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=30, unique=true)
+     * 
+     * @Assert\Unique
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 30
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $pseudoSlug;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 64
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 64
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="datetime")
+     * 
+     * @Assert\NotBlank
+     * @Assert\Range(
+     *      min = "-100 years",
+     *      max = "-13 years"
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $age;
 
     /**
      * @ORM\Column(type="string", length=64, options={"default": "0.png"}))
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show",
+     *  "api_message_list",
+     *  "api_message_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $profilePicture;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * 
+     * @Assert\NotBlank
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
+     * 
+     * @Assert\Length(
+     *      min = 0,
+     *      max = 250
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $biography;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 0,
+     *      max = 255
+     * )
+     * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $nativeCountry;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="timestamp default current_timestamp")
      * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
      * 
+     * @Groups({
+     *  "api_user_list",
+     *  "api_user_show"
+     * })
      */
     private $updatedAt;
 
@@ -107,6 +246,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Experience::class, mappedBy="user")
+     * 
+     * @Groups({
+     *  "api_user_show"
+     * })
      */
     private $experiences;
 

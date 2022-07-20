@@ -6,6 +6,8 @@ use App\Repository\ThematicRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ThematicRepository::class)
@@ -17,26 +19,67 @@ class Thematic
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show",
+     *  "api_thematic_list"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64, unique=true)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 64
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show",
+     *  "api_thematic_list"
+     * })
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=64, unique=true)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 64
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show",
+     *  "api_thematic_list"
+     * })
      */
     private $slugName;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="timestamp default current_timestamp")
+     * 
+     * @Groups({
+     *  "api_thematic_list"
+     * })
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="date", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * 
+     * @Groups({
+     *  "api_thematic_list"
+     * })
      */
     private $updatedAt;
 

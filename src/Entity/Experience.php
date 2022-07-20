@@ -6,6 +6,10 @@ use App\Repository\ExperienceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+// @link https://symfony.com/doc/5.4/components/serializer.html#attributes-groups
+use Symfony\Component\Validator\Constraints as Assert;
+// @link https://symfony.com/doc/current/reference/forms/types.html
 
 /**
  * @ORM\Entity(repositoryClass=ExperienceRepository::class)
@@ -17,107 +21,266 @@ class Experience
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 100
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 100
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $slugTitle;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 0,
+     *      max = 255
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 0,
+     *      max = 255
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $city;
 
     /**
      * @ORM\Column(type="date", columnDefinition="YEAR")
-     *
+     * 
+     * @Assert\NotBlank
+     * @Assert\Range(
+     *      min = "-100 years",
+     *      max = "now"
+     * )
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $year;
 
     /**
      * @ORM\Column(type="date", columnDefinition="timestamp")
      * 
+     * @Assert\NotBlank
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $duration;
 
     /**
      * @ORM\Column(type="text")
      * 
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 1500
+     * )
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $feedback;
 
     /**
      * @ORM\Column(type="integer", options={"default": 0, "unsigned"=true})
      * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $views;
 
     /**
      * @ORM\Column(type="string", length=64, options={"default": "0.png"})
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $picture;
 
     /**
      * @ORM\Column(type="integer", options={"unsigned"=true})
+     * 
+     * @Assert\NotBlank
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 4294967295
+     * )
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $participation_fee;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Choice({"Yes", "No", "Partially"})
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $isHosted;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Choice({"Yes", "No", "Partially"})
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $isFed;
 
     /**
      * @ORM\Column(type="json")
+     * 
+     * @Assert\NotBlank
+     * @Assert\Count(
+     *      min = 1,
+     *      max = 2
+     * )
+     * 
+     * @Groups({
+     *  "api_experience_show"
+     * })
      */
     private $language = [];
 
     /**
      * @ORM\Column(type="date", columnDefinition="timestamp default current_timestamp")
      * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
+     * 
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="date", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiences")
      * @ORM\JoinColumn(nullable=false)
+     * 
+     * @Groups({
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=VolunteeringType::class, inversedBy="experiences")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $volunteeringType;
 
     /**
      * @ORM\ManyToOne(targetEntity=ReceptionStructure::class, inversedBy="experiences")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $receptionStructure;
 
     /**
      * @ORM\ManyToMany(targetEntity=Thematic::class, inversedBy="experiences")
+     * 
+     * @Groups({
+     *  "api_user_show",
+     *  "api_experience_list",
+     *  "api_experience_show"
+     * })
      */
     private $thematic;
 
