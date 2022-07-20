@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Message;
 use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,9 +21,12 @@ class AppFixtures extends Fixture
             'ROLE_ADMIN'
         ];
 
+        $users = [];
+        
         //! User
         for ($i=1; $i <= 30; $i++) { 
             $user = new User();
+
             $user->setPseudo('Member #' . $i);
             $user->setPseudoSlug('member_' . $i);
             $user->setRoles([$roles[array_rand($roles)]]);
@@ -35,8 +39,29 @@ class AppFixtures extends Fixture
             $user->setPhone($faker->phoneNumber());
             $user->setBiography($faker->realText(random_int(0, 250)));
             $user->setNativeCountry($faker->country());
+
+            $users[] = $user;
+            $manager->persist($user);
         }
 
+        //! Message
+        foreach ($users as $user) {
+            for ($i=1; $i < random_int(0, 10); $i++) { 
+                $message = new Message();
+
+                $message->setMessage($faker->realText(150));
+                $message->setIsRead(random_int(0,1));
+                $message->setUserSender($user);
+
+                do {
+                    $userReceiver = $users[array_rand($users)];
+                } while ($user === $userReceiver);
+
+                $message->setUserReceiver($userReceiver);
+
+                $manager->persist($message);
+            }
+        }
 
 
 
