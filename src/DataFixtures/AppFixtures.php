@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Experience;
 use App\Entity\Message;
 use App\Entity\ReceptionStructure;
 use App\Entity\Thematic;
@@ -28,6 +29,12 @@ class AppFixtures extends Fixture
             'ROLE_USER',
             'ROLE_MODERATOR',
             'ROLE_ADMIN'
+        ];
+
+        $choices = [
+            'Yes',
+            'No',
+            'Partially'
         ];
 
         $volunteeringTypeList = [
@@ -143,9 +150,44 @@ class AppFixtures extends Fixture
             $manager->persist($thematic);
         }
 
-        // $product = new Product();
-        // $manager->persist($product);
+        //! Experience
+        foreach ($users as $user) {
+            for ($i=1; $i < random_int(0, 10); $i++) { 
+                $experience = new Experience();
 
-        // $manager->flush();
+                $experience->setTitle($faker->realTextBetween(5, 100));
+                $experience->setSlugTitle($this->slugger->slug($experience->getTitle()));
+                $experience->setCountry($faker->country());
+                $experience->setCity($faker->city());
+                $experience->setYear($faker->dateTimeBetween('-100 years', 'now'));
+                $experience->setDuration(new DateTime());
+                $experience->setFeedback($faker->realTextBetween(5, 1500));
+                $experience->setViews(random_int(0, 5000));
+                $experience->setPicture('0.jpg');
+                $experience->setParticipationFee(random_int(0, 4000000));
+                $experience->setIsHosted($choices[array_rand($choices)]);
+                $experience->setIsFed($choices[array_rand($choices)]);
+
+                if (random_int(1, 2) === 1) {
+                    $experience->setLanguage(['French']);
+                } else {
+                    $experience->setLanguage(['French', 'English']);
+                }
+                
+
+                $experience->setUser($user);
+                $experience->setVolunteeringType($volunteeringTypes[array_rand($volunteeringTypes)]);
+                $experience->setReceptionStructure($receptionStructures[array_rand($receptionStructures)]);
+
+                $thematicIndexes = array_rand($thematic, random_int(1, 17));
+                foreach ($thematicIndexes as $thematicIndex) {
+                    $experience->addThematic($thematics[$thematicIndex]);
+                }
+
+                $manager->persist($experience);
+            }
+        }
+
+        $manager->flush();
     }
 }
