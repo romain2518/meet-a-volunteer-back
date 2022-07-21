@@ -112,7 +112,7 @@ class Experience
     private $year;
 
     /**
-     * @ORM\Column(type="date", columnDefinition="timestamp")
+     * @ORM\Column(type="datetime")
      * 
      * @Assert\NotBlank
      * 
@@ -214,7 +214,7 @@ class Experience
     private $language = [];
 
     /**
-     * @ORM\Column(type="date", columnDefinition="timestamp default current_timestamp")
+     * @ORM\Column(type="datetime")
      * 
      * @Groups({
      *  "api_user_show",
@@ -226,7 +226,7 @@ class Experience
     private $createdAt;
 
     /**
-     * @ORM\Column(type="date", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * @ORM\Column(type="datetime", nullable=true)
      * 
      * @Groups({
      *  "api_user_show",

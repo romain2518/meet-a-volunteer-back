@@ -51,7 +51,7 @@ class Message
     private $isRead;
 
     /**
-     * @ORM\Column(type="datetime", columnDefinition="timestamp default current_timestamp")
+     * @ORM\Column(type="datetime")
      * 
      * @Groups({
      *  "api_message_list",
@@ -61,7 +61,7 @@ class Message
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * @ORM\Column(type="datetime", nullable=true)
      * 
      * @Groups({
      *  "api_message_list",

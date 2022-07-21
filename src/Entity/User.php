@@ -215,7 +215,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $nativeCountry;
 
     /**
-     * @ORM\Column(type="datetime", columnDefinition="timestamp default current_timestamp")
+     * @ORM\Column(type="datetime")
      * 
      * @Groups({
      *  "api_user_list",
@@ -225,7 +225,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * @ORM\Column(type="datetime", nullable=true)
      * 
      * @Groups({
      *  "api_user_list",

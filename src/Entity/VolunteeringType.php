@@ -66,7 +66,7 @@ class VolunteeringType
     private $slugName;
 
     /**
-     * @ORM\Column(type="datetime", columnDefinition="timestamp default current_timestamp")
+     * @ORM\Column(type="datetime")
      * 
      * @Groups({
      *  "api_volunteering_type_list"
@@ -75,7 +75,7 @@ class VolunteeringType
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+     * @ORM\Column(type="datetime", nullable=true)
      * 
      * @Groups({
      *  "api_volunteering_type_list"
