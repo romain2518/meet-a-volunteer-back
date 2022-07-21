@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=VolunteeringTypeRepository::class)
  * @ORM\Table(indexes={@ORM\Index(name="volunteering_name_idx", columns={"name"})})
+ * @ORM\HasLifecycleCallbacks
  */
 class VolunteeringType
 {
@@ -120,6 +121,21 @@ class VolunteeringType
         $this->slugName = $slugName;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatedTimestamps(): void
+    {
+        if ($this->getCreatedAt() === null) { // => PrePersist
+            
+            $this->setCreatedAt(new \DateTime('now'));
+        } else { // => PreUpdate
+
+            $this->setUpdatedAt(new \DateTime('now'));
+        } 
     }
 
     public function getCreatedAt(): ?\DateTimeInterface

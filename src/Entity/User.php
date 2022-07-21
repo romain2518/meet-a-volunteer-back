@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(indexes={@ORM\Index(name="native_country_idx", columns={"native_country"})})
+ * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -456,6 +457,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatedTimestamps(): void
+    {
+        if ($this->getCreatedAt() === null) { // => PrePersist
+            
+            $this->setCreatedAt(new \DateTime('now'));
+        } else { // => PreUpdate
+
+            $this->setUpdatedAt(new \DateTime('now'));
+        } 
+    }
+    
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
