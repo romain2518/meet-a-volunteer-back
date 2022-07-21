@@ -81,7 +81,7 @@ class AppFixtures extends Fixture
         $user = new User();
 
         $user->setPseudo('User');
-        $user->setPseudoSlug($this->slugger->slug($user->getPseudo()));
+        $user->setPseudoSlug($this->slugger->slug($user->getPseudo())->lower());
         $user->setRoles(['ROLE_USER']);
         $user->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
         $user->setFirstname($faker->firstName());
@@ -100,7 +100,7 @@ class AppFixtures extends Fixture
         $moderator = new User();
 
         $moderator->setPseudo('Moderator');
-        $moderator->setPseudoSlug($this->slugger->slug($moderator->getPseudo()));
+        $moderator->setPseudoSlug($this->slugger->slug($moderator->getPseudo())->lower());
         $moderator->setRoles(['ROLE_MODERATOR']);
         $moderator->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
         $moderator->setFirstname($faker->firstName());
@@ -119,7 +119,7 @@ class AppFixtures extends Fixture
         $admin = new User();
 
         $admin->setPseudo('Admin');
-        $admin->setPseudoSlug($this->slugger->slug($admin->getPseudo()));
+        $admin->setPseudoSlug($this->slugger->slug($admin->getPseudo())->lower());
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
         $admin->setFirstname($faker->firstName());
@@ -138,7 +138,7 @@ class AppFixtures extends Fixture
             $user = new User();
 
             $user->setPseudo('Member #' . $i);
-            $user->setPseudoSlug($this->slugger->slug($user->getPseudo()));
+            $user->setPseudoSlug($this->slugger->slug($user->getPseudo())->lower());
             $user->setRoles([$roles[array_rand($roles)]]);
             $user->setPassword('$2y$13$H1YPtVq4xMwKhd1H1D817OOnHRnYklL.3ZmM/ujTL28n9o/43w8MW'); // Password : 1234
             $user->setFirstname($faker->firstName());
@@ -179,7 +179,7 @@ class AppFixtures extends Fixture
             $volunteeringType = new VolunteeringType();
 
             $volunteeringType->setName($volunteeringTypeName);
-            $volunteeringType->setSlugName($this->slugger->slug($volunteeringType->getName()));
+            $volunteeringType->setSlugName($this->slugger->slug($volunteeringType->getName())->lower());
 
             $volunteeringTypes[] = $volunteeringType;
             $manager->persist($volunteeringType);
@@ -190,7 +190,7 @@ class AppFixtures extends Fixture
             $receptionStructure = new ReceptionStructure();
 
             $receptionStructure->setName($receptionStructureName);
-            $receptionStructure->setSlugName($this->slugger->slug($receptionStructure->getName()));
+            $receptionStructure->setSlugName($this->slugger->slug($receptionStructure->getName())->lower());
 
             $receptionStructures[] = $receptionStructure;
             $manager->persist($receptionStructure);
@@ -201,7 +201,7 @@ class AppFixtures extends Fixture
             $thematic = new Thematic();
 
             $thematic->setName($thematicName);
-            $thematic->setSlugName($this->slugger->slug($thematic->getName()));
+            $thematic->setSlugName($this->slugger->slug($thematic->getName())->lower());
 
             $thematics[] = $thematic;
             $manager->persist($thematic);
@@ -213,7 +213,7 @@ class AppFixtures extends Fixture
                 $experience = new Experience();
 
                 $experience->setTitle($faker->realTextBetween(5, 100));
-                $experience->setSlugTitle($this->slugger->slug($experience->getTitle()));
+                $experience->setSlugTitle($this->slugger->slug($experience->getTitle())->lower());
                 $experience->setCountry($faker->country());
                 $experience->setCity($faker->city());
                 $experience->setYear(random_int(1900, 2022));
