@@ -80,7 +80,7 @@ security:
         - { path: ^/back/user, roles: [ROLE_ADMIN] }
 
 
-        role_hierarchy:
+    role_hierarchy:
         # ADMIN has same rights than MODERATOR       
         ROLE_ADMIN : ROLE_MODERATOR
         # MODERATOR has same rights than USER
