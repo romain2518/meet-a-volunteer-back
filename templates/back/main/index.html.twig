@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+{% block body %}
+    <h1>Hello {{ app.user.username }}, welcome to the back office ! ✅</h1>
+
+    <ul>
+        <li><a href="{{ path('app_back_volunteering_type_index') }}">Volunteering types</a></li>
+        <li><a href="{{ path('app_back_reception_structure_index') }}">Reception structures</a></li>
+    </ul>
+{% endblock %}

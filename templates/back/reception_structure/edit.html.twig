@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ReceptionStructure{% endblock %}
+
+{% block body %}
+    <h1>Edit ReceptionStructure</h1>
+
+    {{ include('back/reception_structure/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_back_reception_structure_index') }}">back to list</a>
+
+    {{ include('back/reception_structure/_delete_form.html.twig') }}
+{% endblock %}

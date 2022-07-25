@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}VolunteeringType index{% endblock %}
+
+{% block body %}
+    <h1>VolunteeringType index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>SlugName</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for volunteering_type in volunteering_types %}
+            <tr>
+                <td>{{ volunteering_type.id }}</td>
+                <td>{{ volunteering_type.name }}</td>
+                <td>{{ volunteering_type.slugName }}</td>
+                <td>{{ volunteering_type.createdAt ? volunteering_type.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ volunteering_type.updatedAt ? volunteering_type.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_back_volunteering_type_show', {'id': volunteering_type.id}) }}">show</a>
+                    <a href="{{ path('app_back_volunteering_type_edit', {'id': volunteering_type.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_back_volunteering_type_new') }}">Create new</a>
+{% endblock %}
