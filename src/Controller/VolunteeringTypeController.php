@@ -13,7 +13,7 @@ class VolunteeringTypeController extends AbstractController
     /**
      * @Route(
      *  "/api/volunteeringType/{limit}/{offset}", 
-     *  name="app_thematic_list", 
+     *  name="app_volunteering_type_list", 
      *  methods={"GET"}, 
      *  requirements={
      *      "limit"="\d+",
