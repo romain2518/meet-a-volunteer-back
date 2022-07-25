@@ -113,9 +113,15 @@ class Experience
     private $year;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string", length=64)
      * 
      * @Assert\NotBlank
+     * @Assert\Choice({
+     *  "Moins de 1 mois",
+     *  "Entre 1 mois et 6 mois",
+     *  "Entre 6 mois et 1 an",
+     *  "Plus d'1 an"
+     * })
      * 
      * @Groups({
      *  "api_experience_show"
@@ -351,12 +357,12 @@ class Experience
         return $this;
     }
 
-    public function getDuration(): ?\DateTimeInterface
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
 
-    public function setDuration(\DateTimeInterface $duration): self
+    public function setDuration(string $duration): self
     {
         $this->duration = $duration;
 

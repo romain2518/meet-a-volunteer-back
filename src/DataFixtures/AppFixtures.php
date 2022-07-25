@@ -37,6 +37,13 @@ class AppFixtures extends Fixture
             'Partially'
         ];
 
+        $durationChoices = [
+            'Moins de 1 mois',
+            'Entre 1 mois et 6 mois',
+            'Entre 6 mois et 1 an',
+            'Plus d\'1 an'
+        ];
+
         $volunteeringTypeList = [
             'Public',
             'Private',
@@ -217,7 +224,7 @@ class AppFixtures extends Fixture
                 $experience->setCountry($faker->country());
                 $experience->setCity($faker->city());
                 $experience->setYear(random_int(1900, 2022));
-                $experience->setDuration(new DateTime());
+                $experience->setDuration($durationChoices[array_rand($durationChoices)]);
                 $experience->setFeedback($faker->realTextBetween(5, 1500));
                 $experience->setViews(random_int(0, 5000));
                 $experience->setPicture('0.jpg');
