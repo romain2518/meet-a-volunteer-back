@@ -1,4 +1,5 @@
-{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'd-inline'}}) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-success">{{ button_label|default('Save') }}</button>
+    <a class="btn btn-secondary" href="{{ path('app_back_volunteering_type_index') }}">Back to list</a>
 {{ form_end(form) }}

@@ -25,8 +25,8 @@
                 <td>{{ reception_structure.createdAt ? reception_structure.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ reception_structure.updatedAt ? reception_structure.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_back_reception_structure_show', {'id': reception_structure.id}) }}">show</a>
-                    <a href="{{ path('app_back_reception_structure_edit', {'id': reception_structure.id}) }}">edit</a>
+                    <a class="btn btn-sm btn-primary" href="{{ path('app_back_reception_structure_show', {'id': reception_structure.id}) }}">show</a>
+                    <a class="btn btn-sm btn-success" href="{{ path('app_back_reception_structure_edit', {'id': reception_structure.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -37,5 +37,6 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_back_reception_structure_new') }}">Create new</a>
+    <a class="btn btn-success" href="{{ path('app_back_reception_structure_new') }}">Create new</a>
+    <a class="btn btn-secondary" href="{{ path('app_back_main') }}">Back to home</a>
 {% endblock %}

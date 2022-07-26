@@ -30,9 +30,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_back_volunteering_type_index') }}">back to list</a>
+    <a class="btn btn-secondary" href="{{ path('app_back_volunteering_type_index') }}">back to list</a>
 
-    <a href="{{ path('app_back_volunteering_type_edit', {'id': volunteering_type.id}) }}">edit</a>
+    <a class="btn btn-success" href="{{ path('app_back_volunteering_type_edit', {'id': volunteering_type.id}) }}">edit</a>
 
     {{ include('back/volunteering_type/_delete_form.html.twig') }}
 {% endblock %}
