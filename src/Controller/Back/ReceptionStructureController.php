@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/back/reception/structure")
+ * @Route("/back/receptionStructure")
  */
 class ReceptionStructureController extends AbstractController
 {
