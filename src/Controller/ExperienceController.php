@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use App\Controller\ApiController;
 use App\Entity\Experience;
 use App\Repository\VolunteeringTypeRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -89,9 +90,8 @@ class ExperienceController extends ApiController
 
         try //essaye de deserializer la requête (= transformer l'objet JSON en Objet de l'entité donnée, ici Experience)
         {
-           $newExperience = $serializerInterface->deserialize($jsonContent, Experience::class, 'json');
-        } 
-         catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
+            $newExperience = $serializerInterface->deserialize($jsonContent, Experience::class, 'json');
+        } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
         {
             // dd($e);
             return $this->json("Erreur dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
@@ -111,12 +111,10 @@ class ExperienceController extends ApiController
         }
 
         $newExperience->setSlugTitle($slugger->slug($newExperience->getTitle())->lower());
+
         // on utilise la version raccourcie par le repository
         // le paramètre true, nous fait le flush() auto
         // ça correspond à persist() ET flush()
-
-
-
         $experienceRepository->add($newExperience, true);
 
         return $this->json(
@@ -124,7 +122,7 @@ class ExperienceController extends ApiController
             Response::HTTP_CREATED,
             [
 
-                'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $newExperience->getUser()->getId(),'limit'=> 20, 'offset'=>0])
+                'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $newExperience->getUser()->getId(), 'limit' => 20, 'offset' => 0])
             ],
             [
                 'groups' =>
@@ -135,6 +133,60 @@ class ExperienceController extends ApiController
 
 
 
+        );
+    }
+
+    /**
+     * @Route("/{id}", name="edit", methods={"PUT", "PATCH"},
+     * 
+     * requirements={"id"="\d+"})
+     * 
+     * @IsGranted("ROLE_USER")
+     * 
+     * 
+     * @param Request
+     * @param ExperienceRepository
+     * @param SerializerInterface $serializerInterface
+     * @return JsonResponse
+     */
+
+    public function edit(
+        Experience $experience,
+        Request $request,
+        ExperienceRepository $experienceRepository,
+        SerializerInterface $serializerInterface,
+        ManagerRegistry $doctrine
+    ): JsonResponse {
+
+        //Si l'objet Json est vide on renvoie une 404, car il n'ya rien à modifier
+
+        if ($experience === null) {
+            return $this->json(
+                $experience,
+                Response::HTTP_NOT_FOUND,
+            );
+        }
+
+        $jsonContent = $request->getContent();
+
+
+        // Pour mettre à jour une entité avec le deserializer dans le contexte d’une requête api, il faut utiliser le AbstractNormalizer.
+        $serializerInterface->deserialize($jsonContent, Experience::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $experience]);
+
+
+        $doctrine->getManager()->flush();
+
+        return $this->json(
+
+            $experience,
+            Response::HTTP_PARTIAL_CONTENT,
+            [
+                // Nom de l'en-tête + URL
+                'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $experience->getUser()->getId(), 'limit' => 20, 'offset' => 0])
+            ],
+            [
+                "groups" => "api_experience_show"
+            ]
         );
     }
 
