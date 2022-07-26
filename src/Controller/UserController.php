@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -136,7 +137,13 @@ class UserController extends AbstractController
             null,
             Response::HTTP_NO_CONTENT,
             [
-                'Location' => $this->generateUrl('api_user_list')
+                'Location' => $this->generateUrl('api_user_list', ['limit'=>15, 'offset'=>0])
+            ],
+            [
+                'groups' => 
+                [
+                    'api_user_list'
+                ]
             ]
             );
     }
@@ -193,9 +200,67 @@ class UserController extends AbstractController
             Response::HTTP_CREATED,
             [
                 'Location' => $this->generateUrl('api_user_show', ['id' => $newUser->getId()])
+            ],
+            [
+                'groups' =>
+                [
+                    'api_user_show'
+                ]
             ]
-            );
+        );
 
      }
+
+     //? edit User
+     /**
+     * @Route("/api/user/{id}",name="edit", 
+     *      methods={"PUT", "PATCH"},
+     *      requirements={"id"="\d+"})
+     */
+    public function edit(
+        User $user = null,
+        Request $request,
+        ManagerRegistry $ManagerRegistry,
+        SerializerInterface $serializerInterface
+        ): JsonResponse
+    {
+        if ($user === null)
+        {
+            // on renvoie donc une 404
+            return $this->json(
+                [
+                    "erreur" => "l'utilisateur n'a pas été trouvé",
+                    "code_error" => 404
+                ],
+                Response::HTTP_NOT_FOUND,// 404
+            );
+        }
+
+        $jsonContent = $request->getContent();
+
+        $serializerInterface->deserialize(
+            $jsonContent,
+            User::class, 
+            'json', 
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $user]
+        );
+
+        $ManagerRegistry->getManager()->flush();
+
+        return $this->json(
+            $user,
+            Response::HTTP_PARTIAL_CONTENT,
+            [
+                'Location' => $this->generateUrl('api_user_show', ['id' => $user->getId()])
+            ],
+            [
+                'groups' =>
+                [
+                    'api_user_show'
+                ]
+            ]
+                );
+
+    }
 
 }

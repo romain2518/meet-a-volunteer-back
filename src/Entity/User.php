@@ -10,10 +10,14 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(indexes={@ORM\Index(name="native_country_idx", columns={"native_country"})})
+ * @UniqueEntity("pseudo")
+ * @UniqueEntity("pseudoSlug")
+ * @UniqueEntity("email")
  * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -37,7 +41,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * 
-     * @Assert\Unique
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 3,
@@ -74,7 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=30, unique=true)
      * 
-     * @Assert\Unique
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 3,
