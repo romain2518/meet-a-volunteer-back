@@ -57,8 +57,8 @@ security:
         ###PATHS for BACK OFFICE
 
         - { path: ^/back/login, roles: [PUBLIC_ACCESS] }
-        - { path: ^/back, roles: [ROLE_MODERATOR] }
         - { path: ^/back/user, roles: [ROLE_ADMIN] }
+        - { path: ^/back, roles: [ROLE_MODERATOR] }
         
         ###PATHS for MESSAGE
 
