@@ -189,40 +189,32 @@ class ExperienceController extends ApiController
             ]
         );
 
-    /**
-     * @Route("/{id}",name="delete", methods={"DELETE"}, requirements={"id"="\d+"})
-     *
-     * @param Experience $experience
-     */
-
-    
     }
 
     /**
      * @Route("/{id}",name="delete", methods={"DELETE"}, requirements={"id"="\d+"})
      *
-     * @param Genre $genre
+     * @param Experience $experience
      */
     public function delete(?Experience $experience, ExperienceRepository $experienceRepository)
     {
-        // gestion du paramConverter
-        if ($experience === null){ 
+        
+        if ($experience === null) {
 
             return $this->json(
                 $experience,
                 Response::HTTP_NOT_FOUND,
             );
         }
-        
-        
-        
+
+
         $experienceRepository->remove($experience, true);
 
         return $this->json(
             null,
             Response::HTTP_NO_CONTENT,
             [
-                
+
                 'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $experience->getUser()->getId(), 'limit' => 20, 'offset' => 0])
             ]
         );
@@ -327,13 +319,13 @@ class ExperienceController extends ApiController
      */
 
 
-    //TODO le tri par random, faire ma propre requete dql ?
+    
 
     public function listByRandom(ExperienceRepository $experienceRepository, int $limit, int $offset): JsonResponse
     {
-
+ 
         return $this->json(
-            $experienceRepository->findBy([], ['createdAt' => 'RANDOM'], $limit, $offset),
+            $experienceRepository->findByRandom($limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -442,7 +434,7 @@ class ExperienceController extends ApiController
      */
 
 
-    //TODO Je fais appel à des donnés stockées dans une table intémédiaire. Faire une jointure ? 
+    //TODO Je fais appel à des donnés stockées dans une table intérmédiaire. Faire une jointure ? 
 
 
     public function listByThematic(ExperienceRepository $experienceRepository, ThematicRepository $thematicRepository, int $id, int $limit, int $offset)
