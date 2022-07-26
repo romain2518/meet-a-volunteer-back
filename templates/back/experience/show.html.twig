@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Experience{% endblock %}
+
+{% block body %}
+    <h1>Experience</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ experience.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ experience.title }}</td>
+            </tr>
+            <tr>
+                <th>SlugTitle</th>
+                <td>{{ experience.slugTitle }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ experience.country }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ experience.city }}</td>
+            </tr>
+            <tr>
+                <th>Year</th>
+                <td>{{ experience.year }}</td>
+            </tr>
+            <tr>
+                <th>Duration</th>
+                <td>{{ experience.duration }}</td>
+            </tr>
+            <tr>
+                <th>Feedback</th>
+                <td>{{ experience.feedback }}</td>
+            </tr>
+            <tr>
+                <th>Views</th>
+                <td>{{ experience.views }}</td>
+            </tr>
+            <tr>
+                <th>Picture</th>
+                <td>{{ experience.picture }}</td>
+            </tr>
+            <tr>
+                <th>Participation_fee</th>
+                <td>{{ experience.participationFee }}</td>
+            </tr>
+            <tr>
+                <th>IsHosted</th>
+                <td>{{ experience.isHosted }}</td>
+            </tr>
+            <tr>
+                <th>IsFed</th>
+                <td>{{ experience.isFed }}</td>
+            </tr>
+            <tr>
+                <th>Language</th>
+                <td>{{ experience.language ? experience.language|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ experience.createdAt ? experience.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ experience.updatedAt ? experience.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary" href="{{ path('app_back_experience_index') }}">Back to list</a>
+
+    {{ include('back/experience/_delete_form.html.twig') }}
+{% endblock %}
