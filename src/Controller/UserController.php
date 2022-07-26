@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -118,11 +119,19 @@ class UserController extends AbstractController
      */
     public function delete(User $user = null, UserRepository $repo)
     {
-        if ($user === null){
-            return $this->json404();
-        }
+        if ($user === null)
+        {
+            // on renvoie donc une 404
+            return $this->json(
+                [
+                    "erreur" => "l'utilisateur n'a pas été trouvé",
+                    "code_error" => 404
+                ],
+                Response::HTTP_NOT_FOUND,// 404
+            );
+           }
 
-        $repo->remove($genre, true);
+        $repo->remove($user, true);
         return $this->json(
             null,
             Response::HTTP_NO_CONTENT,
@@ -141,25 +150,51 @@ class UserController extends AbstractController
       * )
       * 
       * @param Request $request
-      * @param SerializerInterface $serializer
-      * @param ManagerRegistry $manager
-      * @param ValidatorInterface $validator
+      * @param UserRepository $userRepository
+      * @param SerializerInterface $serializerInterface
+      * @param ValidatorInterface $validatorInterface
       * @return JsonResponse
       */
      public function create(
          Request $request,
-         SerializerInterface $serializer,
-         ManagerRegistry $manager,
-         ValidatorInterface $validator
+         SerializerInterface $serializerInterface,
+         UserRepository $userRepository,
+         ValidatorInterface $validatorInterface
      ): JsonResponse
      {
          //récupérer le contenu JSON
          $jsonContent = $request->getContent();
 
-         //Désérialiser le JSON en entité Doctrine User
-         $user = $serializer->deserialize($jsonContent, User::class, 'json');
+         //vérifier ce que fournit l'user
+         try{
+             $newUser = $serializerInterface->deserialize($jsonContent, User::class, 'json');
+         }
 
+         catch(Exception $e)
+         {
+            return $this->json("Le JSON est mal formé", Response::HTTP_BAD_REQUEST);
+         }
+    
+         //valider les infos
+         $errors = $validatorInterface->validate($newUser);
 
+         if (count($errors)> 0)
+        {
+            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        //faire l'insertion
+        $userRepository->add($newUser, true);
+
+        //retour insertion ok
+        //fournir objet créé pour que l'user puisse avoir l'id
+        return $this->json(
+            $newUser,
+            Response::HTTP_CREATED,
+            [
+                'Location' => $this->generateUrl('api_user_show', ['id' => $newUser->getId()])
+            ]
+            );
 
      }
 
