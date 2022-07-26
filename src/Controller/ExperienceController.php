@@ -188,6 +188,44 @@ class ExperienceController extends ApiController
                 "groups" => "api_experience_show"
             ]
         );
+
+    /**
+     * @Route("/{id}",name="delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     *
+     * @param Experience $experience
+     */
+
+    
+    }
+
+    /**
+     * @Route("/{id}",name="delete", methods={"DELETE"}, requirements={"id"="\d+"})
+     *
+     * @param Genre $genre
+     */
+    public function delete(?Experience $experience, ExperienceRepository $experienceRepository)
+    {
+        // gestion du paramConverter
+        if ($experience === null){ 
+
+            return $this->json(
+                $experience,
+                Response::HTTP_NOT_FOUND,
+            );
+        }
+        
+        
+        
+        $experienceRepository->remove($experience, true);
+
+        return $this->json(
+            null,
+            Response::HTTP_NO_CONTENT,
+            [
+                
+                'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $experience->getUser()->getId(), 'limit' => 20, 'offset' => 0])
+            ]
+        );
     }
 
 

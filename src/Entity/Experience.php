@@ -244,8 +244,8 @@ class Experience
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiences")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiences", cascade={"persist"}))
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * 
      * @Groups({
      *  "api_experience_list",
@@ -255,7 +255,7 @@ class Experience
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=VolunteeringType::class, inversedBy="experiences")
+     * @ORM\ManyToOne(targetEntity=VolunteeringType::class, inversedBy="experiences", cascade={"persist"}))
      * 
      * @Groups({
      *  "api_user_show",
@@ -266,7 +266,7 @@ class Experience
     private $volunteeringType;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ReceptionStructure::class, inversedBy="experiences")
+     * @ORM\ManyToOne(targetEntity=ReceptionStructure::class, inversedBy="experiences", cascade={"persist"}))
      * 
      * @Groups({
      *  "api_user_show",
@@ -277,7 +277,7 @@ class Experience
     private $receptionStructure;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Thematic::class, inversedBy="experiences")
+     * @ORM\ManyToMany(targetEntity=Thematic::class, inversedBy="experiences", cascade={"persist"})
      * 
      * @Groups({
      *  "api_user_show",

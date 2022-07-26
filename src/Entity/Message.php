@@ -73,7 +73,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="sentMessages")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * 
      * @Groups({
      *  "api_message_list",
@@ -84,7 +84,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="receivedMessages")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * 
      * @Groups({
      *  "api_message_list",
