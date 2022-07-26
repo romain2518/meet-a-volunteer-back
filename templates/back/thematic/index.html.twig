@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Thematic index{% endblock %}
+
+{% block body %}
+    <h1>Thematic index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>SlugName</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for thematic in thematics %}
+            <tr>
+                <td>{{ thematic.id }}</td>
+                <td>{{ thematic.name }}</td>
+                <td>{{ thematic.slugName }}</td>
+                <td>{{ thematic.createdAt ? thematic.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ thematic.updatedAt ? thematic.updatedAt|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="{{ path('app_back_thematic_show', {'id': thematic.id}) }}">show</a>
+                    <a class="btn btn-sm btn-success" href="{{ path('app_back_thematic_edit', {'id': thematic.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('app_back_thematic_new') }}">Create new</a>
+    <a class="btn btn-secondary" href="{{ path('app_back_main') }}">Back to home</a>
+{% endblock %}
