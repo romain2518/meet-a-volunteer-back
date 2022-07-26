@@ -245,7 +245,7 @@ class Experience
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiences")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * 
      * @Groups({
      *  "api_experience_list",
