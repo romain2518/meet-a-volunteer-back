@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}Back Office{% endblock %}
 
 {% block body %}
     <h1>Hello {{ app.user.username }}, welcome to the back office ! ✅</h1>
@@ -8,5 +8,12 @@
     <ul>
         <li><a href="{{ path('app_back_volunteering_type_index') }}">Volunteering types</a></li>
         <li><a href="{{ path('app_back_reception_structure_index') }}">Reception structures</a></li>
+        <li><a href="{{ path('app_back_thematic_index') }}">Thematics</a></li>
+        <li><a href="{{ path('app_back_experience_index') }}">Experiences</a></li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li><a href="{{ path('app_back_user_index') }}">Users</a></li>
+        {% endif %}
     </ul>
+
+    <a href="{{ path('app_logout') }}">Logout</a>
 {% endblock %}
