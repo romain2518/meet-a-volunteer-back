@@ -8,6 +8,7 @@ use App\Repository\ThematicRepository;
 use App\Repository\UserRepository;
 use App\Controller\ApiController;
 use App\Entity\Experience;
+use App\Entity\Thematic;
 use App\Repository\VolunteeringTypeRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -188,7 +189,6 @@ class ExperienceController extends ApiController
                 "groups" => "api_experience_show"
             ]
         );
-
     }
 
     /**
@@ -198,7 +198,7 @@ class ExperienceController extends ApiController
      */
     public function delete(?Experience $experience, ExperienceRepository $experienceRepository)
     {
-        
+
         if ($experience === null) {
 
             return $this->json(
@@ -319,11 +319,11 @@ class ExperienceController extends ApiController
      */
 
 
-    
+
 
     public function listByRandom(ExperienceRepository $experienceRepository, int $limit, int $offset): JsonResponse
     {
- 
+
         return $this->json(
             $experienceRepository->findByRandom($limit, $offset),
             Response::HTTP_OK,
@@ -433,16 +433,16 @@ class ExperienceController extends ApiController
      * )
      */
 
-
-    //TODO Je fais appel à des donnés stockées dans une table intérmédiaire. Faire une jointure ? 
-
-
-    public function listByThematic(ExperienceRepository $experienceRepository, ThematicRepository $thematicRepository, int $id, int $limit, int $offset)
+     
+    public function listByThematic(int $limit, Thematic $thematic, int $offset)
     {
+        $experiences = $thematic->getExperiences();
+        $slicedList = $experiences->slice($offset, $limit);
+
 
         return $this->json(
-
-            $experienceRepository->findBy(["thematicId" => $thematicRepository->find($id)], null, $limit, $offset),
+            // $experienceRepository->findByThematic($id, $limit, $offset),
+            $slicedList,
             Response::HTTP_OK,
             [],
             [
