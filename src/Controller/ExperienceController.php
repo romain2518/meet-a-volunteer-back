@@ -156,6 +156,7 @@ class ExperienceController extends ApiController
         Request $request,
         ExperienceRepository $experienceRepository,
         SerializerInterface $serializerInterface,
+        SluggerInterface $slugger,
         ManagerRegistry $doctrine
     ): JsonResponse {
 
@@ -173,6 +174,8 @@ class ExperienceController extends ApiController
 
         // Pour mettre à jour une entité avec le deserializer dans le contexte d’une requête api, il faut utiliser le AbstractNormalizer.
         $serializerInterface->deserialize($jsonContent, Experience::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $experience]);
+
+        $experience->setSlugTitle($slugger->slug($experience->getTitle())->lower());
 
 
         $doctrine->getManager()->flush();
