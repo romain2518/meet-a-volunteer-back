@@ -104,8 +104,7 @@ class UserController extends AbstractController
              // on renvoie donc une 404
              return $this->json(
                  [
-                     "erreur" => "l'utilisateur n'a pas été trouvé",
-                     "code_error" => 404
+                     "Error: user not found"
                  ],
                  Response::HTTP_NOT_FOUND,// 404
              );
@@ -141,12 +140,14 @@ class UserController extends AbstractController
             // on renvoie donc une 404
             return $this->json(
                 [
-                    "erreur" => "l'utilisateur n'a pas été trouvé",
-                    "code_error" => 404
+                    "error: user not found"
                 ],
                 Response::HTTP_NOT_FOUND,// 404
             );
-           }
+        }
+
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
+        
 
         $repo->remove($user, true);
         return $this->json(
@@ -198,7 +199,7 @@ class UserController extends AbstractController
 
          catch(Exception $e)
          {
-            return $this->json("Le JSON est mal formé", Response::HTTP_BAD_REQUEST);
+            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
          }
     
          //valider les infos
@@ -253,12 +254,13 @@ class UserController extends AbstractController
             // on renvoie donc une 404
             return $this->json(
                 [
-                    "erreur" => "l'utilisateur n'a pas été trouvé",
-                    "code_error" => 404
+                    "Error: user not found"
                 ],
                 Response::HTTP_NOT_FOUND,// 404
             );
         }
+
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $jsonContent = $request->getContent();
 

@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class MessagesController extends AbstractController
+class MessageController extends AbstractController
 {
     /**
      * @Route(
@@ -101,7 +101,7 @@ class MessagesController extends AbstractController
 
         catch(Exception $e)
         {
-           return $this->json("Le JSON est mal formé", Response::HTTP_BAD_REQUEST);
+           return $this->json("Error: bad request", Response::HTTP_BAD_REQUEST);
         }
    
         //valider les infos

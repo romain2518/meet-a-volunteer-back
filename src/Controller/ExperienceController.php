@@ -99,7 +99,7 @@ class ExperienceController extends ApiController
         } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
         {
             // dd($e);
-            return $this->json("Error dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
+            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
         }
 
         //Il nous faut ensuite vérifier les infos fournis par l'utilisateur, ici nous n'avons pas de formulaire qui aurait pu contraindre les réponses de 
@@ -168,7 +168,7 @@ class ExperienceController extends ApiController
 
         if ($experience === null) {
             return $this->json(
-                'Error: Experience not available',
+                'Error: Experience not found',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -212,7 +212,7 @@ class ExperienceController extends ApiController
         if ($experience === null) {
 
             return $this->json(
-                'Error: Experience not available',
+                'Error: Experience not found',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -445,7 +445,7 @@ class ExperienceController extends ApiController
 
         if ($receptionStructure === null) {
             return $this->json(
-                'Error: Reception structure not available',
+                'Error: Reception structure not found',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -480,7 +480,7 @@ class ExperienceController extends ApiController
 
         if ($thematic === null) {
             return $this->json(
-                'Error: Thematic not available',
+                'Error: Thematic not found',
                 Response::HTTP_NOT_FOUND
             );
         }
