@@ -43,7 +43,7 @@ class ExperienceRepository extends ServiceEntityRepository
     
     {
         return $this->getEntityManager()
-            ->createQuery("SELECT e FROM App\Entity\Experience e ORDER BY RAND()")
+            ->createQuery("SELECT e FROM App\Entity\Experience e ORDER BY RAND()") //a nécessité l'installation d'une extension: https://github.com/beberlei/DoctrineExtensions
             ->setMaxResults($limit)  
             ->setFirstResult($offset) 
             ->getResult();
