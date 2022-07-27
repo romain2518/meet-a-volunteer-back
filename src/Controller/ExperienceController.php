@@ -37,17 +37,25 @@ class ExperienceController extends ApiController
      * 
      * methods={"GET"}, 
      * requirements={
-     *      "limit"="\d+",
-     *      "offset"="\d+"}
+     *      "id"="\d+",
+     *      }
      * )
      */
 
-    public function show(ExperienceRepository $experienceRepository, int $id): JsonResponse
+    public function show(Experience $experience = null): JsonResponse
     {
 
+        // ParamConverter convert the $id in an object (here $experience) and is used instead of experienceRepository->find($id)
+
+        if ($experience === null) {
+            return $this->json(
+                'Error: Experience not available',
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $this->json(
-            $experienceRepository->find($id),
+            $experience,
             Response::HTTP_OK,
             [],
             [
@@ -77,10 +85,6 @@ class ExperienceController extends ApiController
         SluggerInterface $slugger
     ): JsonResponse {
 
-        //Si l'utilisateur qui envoie la requête n'est pas ROLE_USER, on renvoie une erreur
-        if (!$this->isGranted("ROLE_USER")) {
-            return $this->json(["error" => "Authorised user only"], Response::HTTP_FORBIDDEN);
-        }
 
         //Je récupère le contenu de la requête via request->getContent
         $jsonContent = $request->getContent();
@@ -95,7 +99,7 @@ class ExperienceController extends ApiController
         } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
         {
             // dd($e);
-            return $this->json("Erreur dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
+            return $this->json("Error dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
         }
 
         //Il nous faut ensuite vérifier les infos fournis par l'utilisateur, ici nous n'avons pas de formulaire qui aurait pu contraindre les réponses de 
@@ -152,7 +156,7 @@ class ExperienceController extends ApiController
      */
 
     public function edit(
-        Experience $experience,
+        Experience $experience = null,
         Request $request,
         ExperienceRepository $experienceRepository,
         SerializerInterface $serializerInterface,
@@ -164,10 +168,13 @@ class ExperienceController extends ApiController
 
         if ($experience === null) {
             return $this->json(
-                $experience,
-                Response::HTTP_NOT_FOUND,
+                'Error: Experience not available',
+                Response::HTTP_NOT_FOUND
             );
         }
+
+        //If connected user is the writer
+        $this->denyAccessUnlessGranted('EXPERIENCE_EDIT', $experience);
 
         $jsonContent = $request->getContent();
 
@@ -199,17 +206,19 @@ class ExperienceController extends ApiController
      *
      * @param Experience $experience
      */
-    public function delete(?Experience $experience, ExperienceRepository $experienceRepository)
+    public function delete(Experience $experience = null, ExperienceRepository $experienceRepository)
     {
-
+        //If experience exists
         if ($experience === null) {
 
             return $this->json(
-                $experience,
-                Response::HTTP_NOT_FOUND,
+                'Error: Experience not available',
+                Response::HTTP_NOT_FOUND
             );
         }
 
+        //If connected user is the writer
+        $this->denyAccessUnlessGranted('EXPERIENCE_EDIT', $experience);
 
         $experienceRepository->remove($experience, true);
 
@@ -270,8 +279,20 @@ class ExperienceController extends ApiController
     public function listByUser(ExperienceRepository $experienceRepository, UserRepository $userRepository, int $user_id, int $limit, int $offset): JsonResponse
     {
 
+        
+       $user = $userRepository->find($user_id);
+       
+       if ($user === null) 
+       {
         return $this->json(
-            $experienceRepository->findBy(["user" => $userRepository->find($user_id)], null, $limit, $offset),
+            'Error: User not found',
+            Response::HTTP_NOT_FOUND
+        );
+
+       }
+
+        return $this->json(
+            $experienceRepository->findBy(["user" => $user], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -381,9 +402,19 @@ class ExperienceController extends ApiController
     public function listByVolunteeringType(ExperienceRepository $experienceRepository, VolunteeringTypeRepository $volunteeringTypeRepository, int $id, int $limit, int $offset)
     {
 
+        $volunteeringTypeId = $volunteeringTypeRepository->find($id);
+
+        if ($volunteeringTypeId === null) {
+            
+            return $this->json(
+                'Error: VolunteeringType not found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         return $this->json(
 
-            $experienceRepository->findBy(["volunteeringType" => $volunteeringTypeRepository->find($id)], null, $limit, $offset),
+            $experienceRepository->findBy(["volunteeringType" => $volunteeringTypeId ], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -410,10 +441,17 @@ class ExperienceController extends ApiController
 
     public function listByReceptionStructure(ExperienceRepository $experienceRepository, ReceptionStructureRepository $receptionStructureRepository, int $id, int $limit, int $offset)
     {
+        $receptionStructure = $receptionStructureRepository->find($id);
 
+        if ($receptionStructure === null) {
+            return $this->json(
+                'Error: Reception structure not available',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+        
         return $this->json(
-
-            $experienceRepository->findBy(["receptionStructure" => $receptionStructureRepository->find($id)], null, $limit, $offset),
+            $experienceRepository->findBy(["receptionStructure" => $receptionStructure], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -436,9 +474,17 @@ class ExperienceController extends ApiController
      * )
      */
 
-     
-    public function listByThematic(int $limit, Thematic $thematic, int $offset)
+
+    public function listByThematic(int $limit, Thematic $thematic = null, int $offset)
     {
+
+        if ($thematic === null) {
+            return $this->json(
+                'Error: Thematic not available',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         $experiences = $thematic->getExperiences();
         $slicedList = $experiences->slice($offset, $limit);
 
