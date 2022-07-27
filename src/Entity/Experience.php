@@ -117,10 +117,10 @@ class Experience
      * 
      * @Assert\NotBlank
      * @Assert\Choice({
-     *  "Moins de 1 mois",
-     *  "Entre 1 mois et 6 mois",
-     *  "Entre 6 mois et 1 an",
-     *  "Plus d'1 an"
+     *  "Less than a month",
+     *  "Between 1 and 6 months",
+     *  "Between 6 months and one year",
+     *  "More than a year"
      * })
      * 
      * @Groups({
