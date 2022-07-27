@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ReceptionStructure index{% endblock %}
+
+{% block body %}
+    <h1>ReceptionStructure index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>SlugName</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reception_structure in reception_structures %}
+            <tr>
+                <td>{{ reception_structure.id }}</td>
+                <td>{{ reception_structure.name }}</td>
+                <td>{{ reception_structure.slugName }}</td>
+                <td>{{ reception_structure.createdAt ? reception_structure.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reception_structure.updatedAt ? reception_structure.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="{{ path('app_back_reception_structure_show', {'id': reception_structure.id}) }}">show</a>
+                    <a class="btn btn-sm btn-success" href="{{ path('app_back_reception_structure_edit', {'id': reception_structure.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('app_back_reception_structure_new') }}">Create new</a>
+    <a class="btn btn-secondary" href="{{ path('app_back_main') }}">Back to home</a>
+{% endblock %}

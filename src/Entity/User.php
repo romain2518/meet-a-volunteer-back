@@ -77,7 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=30, unique=true)
      * 
-     * 
      * @Groups({
      *  "api_user_list",
      *  "api_user_show",

@@ -8,10 +8,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ReceptionStructureRepository::class)
  * @ORM\Table(indexes={@ORM\Index(name="reception_structure_name_idx", columns={"name"})})
+ * @UniqueEntity("name")
+ * @UniqueEntity("slugName")
  * @ORM\HasLifecycleCallbacks
  */
 class ReceptionStructure

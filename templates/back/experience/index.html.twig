@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Experience index{% endblock %}
+
+{% block body %}
+    <h1>Experience index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Year</th>
+                <th>Duration</th>
+                <th>Views</th>
+                <th>Participation_fee</th>
+                <th>Language</th>
+                <th>CreatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for experience in experiences %}
+            <tr>
+                <td>{{ experience.id }}</td>
+                <td>{{ experience.title }}</td>
+                <td>{{ experience.country }}</td>
+                <td>{{ experience.city }}</td>
+                <td>{{ experience.year }}</td>
+                <td>{{ experience.duration }}</td>
+                <td>{{ experience.views }}</td>
+                <td>{{ experience.participationFee }}</td>
+                <td>{{ experience.language ? experience.language|json_encode : '' }}</td>
+                <td>{{ experience.createdAt ? experience.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td><a class="btn btn-sm btn-primary" href="{{ path('app_back_experience_show', {'id': experience.id}) }}">show</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="17">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary" href="{{ path('app_back_main') }}">Back to home</a>
+{% endblock %}
