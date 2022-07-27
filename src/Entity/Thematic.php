@@ -88,7 +88,7 @@ class Thematic
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Experience::class, mappedBy="thematic", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity=Experience::class, mappedBy="thematic")
      */
     private $experiences;
 
