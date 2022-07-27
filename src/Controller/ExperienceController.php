@@ -77,10 +77,6 @@ class ExperienceController extends ApiController
         SluggerInterface $slugger
     ): JsonResponse {
 
-        //Si l'utilisateur qui envoie la requête n'est pas ROLE_USER, on renvoie une erreur
-        if (!$this->isGranted("ROLE_USER")) {
-            return $this->json(["error" => "Authorised user only"], Response::HTTP_FORBIDDEN);
-        }
 
         //Je récupère le contenu de la requête via request->getContent
         $jsonContent = $request->getContent();
@@ -152,7 +148,7 @@ class ExperienceController extends ApiController
      */
 
     public function edit(
-        Experience $experience,
+        Experience $experience = null,
         Request $request,
         ExperienceRepository $experienceRepository,
         SerializerInterface $serializerInterface,
@@ -164,7 +160,7 @@ class ExperienceController extends ApiController
 
         if ($experience === null) {
             return $this->json(
-                $experience,
+                'Erreur: Experience not available',
                 Response::HTTP_NOT_FOUND,
             );
         }
@@ -199,13 +195,13 @@ class ExperienceController extends ApiController
      *
      * @param Experience $experience
      */
-    public function delete(?Experience $experience, ExperienceRepository $experienceRepository)
+    public function delete(Experience $experience = null, ExperienceRepository $experienceRepository)
     {
 
         if ($experience === null) {
 
             return $this->json(
-                $experience,
+                'Erreur: Experience not available',
                 Response::HTTP_NOT_FOUND,
             );
         }
@@ -437,8 +433,16 @@ class ExperienceController extends ApiController
      */
 
      
-    public function listByThematic(int $limit, Thematic $thematic, int $offset)
+    public function listByThematic(int $limit, Thematic $thematic = null, int $offset)
     {
+
+        if ($thematic === null) {
+            return $this->json(
+                'Erreur: Thematic not available',
+                Response::HTTP_NOT_FOUND,
+            );
+        }
+
         $experiences = $thematic->getExperiences();
         $slicedList = $experiences->slice($offset, $limit);
 
