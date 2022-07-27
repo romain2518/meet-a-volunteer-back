@@ -236,7 +236,7 @@ class UserController extends AbstractController
 
      //? edit User
      /**
-     * @Route("/api/user/{id}",name="edit", 
+     * @Route("/api/user/{id}",name="api_user_edit", 
      *      methods={"PUT", "PATCH"},
      *      requirements={"id"="\d+"})
      */
