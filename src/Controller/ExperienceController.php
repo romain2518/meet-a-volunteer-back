@@ -49,7 +49,7 @@ class ExperienceController extends ApiController
 
         if ($experience === null) {
             return $this->json(
-                'Erreur: Experience not available',
+                'Error: Experience not available',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -99,7 +99,7 @@ class ExperienceController extends ApiController
         } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
         {
             // dd($e);
-            return $this->json("Erreur dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
+            return $this->json("Error dans la syntaxe JSON", Response::HTTP_BAD_REQUEST);
         }
 
         //Il nous faut ensuite vérifier les infos fournis par l'utilisateur, ici nous n'avons pas de formulaire qui aurait pu contraindre les réponses de 
@@ -168,10 +168,13 @@ class ExperienceController extends ApiController
 
         if ($experience === null) {
             return $this->json(
-                'Erreur: Experience not available',
+                'Error: Experience not available',
                 Response::HTTP_NOT_FOUND
             );
         }
+
+        //If connected user is the writer
+        $this->denyAccessUnlessGranted('EXPERIENCE_EDIT', $experience);
 
         $jsonContent = $request->getContent();
 
@@ -205,15 +208,17 @@ class ExperienceController extends ApiController
      */
     public function delete(Experience $experience = null, ExperienceRepository $experienceRepository)
     {
-
+        //If experience exists
         if ($experience === null) {
 
             return $this->json(
-                'Erreur: Experience not available',
+                'Error: Experience not available',
                 Response::HTTP_NOT_FOUND
             );
         }
 
+        //If connected user is the writer
+        $this->denyAccessUnlessGranted('EXPERIENCE_EDIT', $experience);
 
         $experienceRepository->remove($experience, true);
 
@@ -280,7 +285,7 @@ class ExperienceController extends ApiController
        if ($user === null) 
        {
         return $this->json(
-            'Erreur: User not found',
+            'Error: User not found',
             Response::HTTP_NOT_FOUND
         );
 
@@ -402,7 +407,7 @@ class ExperienceController extends ApiController
         if ($volunteeringTypeId === null) {
             
             return $this->json(
-                'Erreur: VolunteeringType not found',
+                'Error: VolunteeringType not found',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -440,7 +445,7 @@ class ExperienceController extends ApiController
 
         if ($receptionStructure === null) {
             return $this->json(
-                'Erreur: Reception structure not available',
+                'Error: Reception structure not available',
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -475,7 +480,7 @@ class ExperienceController extends ApiController
 
         if ($thematic === null) {
             return $this->json(
-                'Erreur: Thematic not available',
+                'Error: Thematic not available',
                 Response::HTTP_NOT_FOUND
             );
         }
