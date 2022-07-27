@@ -28,16 +28,6 @@ class Message
     /**
      * @ORM\Column(type="text")
      * 
-     * @Groups({
-     *  "api_message_list",
-     *  "api_message_show"
-     * })
-     */
-    private $message;
-
-    /**
-     * @ORM\Column(type="boolean", options={"default": 0})
-     * 
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 5,
@@ -49,7 +39,17 @@ class Message
      *  "api_message_show"
      * })
      */
-    private $isRead;
+    private $message;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": 0})
+     * 
+     * @Groups({
+     *  "api_message_list",
+     *  "api_message_show"
+     * })
+     */
+    private $isRead = false;
 
     /**
      * @ORM\Column(type="datetime")
