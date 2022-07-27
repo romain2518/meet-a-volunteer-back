@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Experience;
 use App\Entity\User;
+use App\Repository\ExperienceRepository;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,8 +15,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -56,10 +62,20 @@ class UserController extends AbstractController
      * }
      * )
      */
-    public function listMostExperienced(UserRepository $userRepository, int $limit, int $offset): JsonResponse
+    public function listMostExperienced(UserRepository $userRepository, int $limit, int $offset, Connection $connection): JsonResponse
      {
+         $sql = 'SELECT u.`id`, `pseudo`, `roles`, `pseudo_slug`, `firstname`, `lastname`, `age`, `profile_picture`, `email`, `phone`, `biography`, `native_country`, u.`created_at`, u.`updated_at`, COUNT(e.id) expCounter
+         FROM user u
+         INNER JOIN experience e
+         ON user_id = u.id
+         GROUP BY user_id
+         ORDER BY expCounter DESC
+         LIMIT ?, ?';
+
          return $this->json(
-             $userRepository->findBy([], null, $limit, $offset),
+
+            $connection->executeQuery($sql, [$offset, $limit], [ParameterType::INTEGER, ParameterType::INTEGER])->fetchAllAssociative(),
+             
              Response::HTTP_OK,
              [],
              [
@@ -161,12 +177,15 @@ class UserController extends AbstractController
       * @param SerializerInterface $serializerInterface
       * @param ValidatorInterface $validatorInterface
       * @return JsonResponse
+
       */
      public function create(
          Request $request,
          SerializerInterface $serializerInterface,
          UserRepository $userRepository,
-         ValidatorInterface $validatorInterface
+         ValidatorInterface $validatorInterface,
+         SluggerInterface $slugger,
+         UserPasswordHasherInterface $passwordHasher
      ): JsonResponse
      {
          //récupérer le contenu JSON
@@ -189,6 +208,9 @@ class UserController extends AbstractController
         {
             return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        $newUser->setPseudoSlug($slugger->slug($newUser->getPseudo())->lower());
+        $newUser->setPassword($passwordHasher->hashPassword($newUser, $newUser->getPassword()));
 
         //faire l'insertion
         $userRepository->add($newUser, true);
@@ -221,7 +243,9 @@ class UserController extends AbstractController
         User $user = null,
         Request $request,
         ManagerRegistry $ManagerRegistry,
-        SerializerInterface $serializerInterface
+        SerializerInterface $serializerInterface,
+        SluggerInterface $slugger,
+        UserPasswordHasherInterface $passwordHasher
         ): JsonResponse
     {
         if ($user === null)
@@ -244,6 +268,10 @@ class UserController extends AbstractController
             'json', 
             [AbstractNormalizer::OBJECT_TO_POPULATE => $user]
         );
+
+        $user->setPseudoSlug($slugger->slug($user->getPseudo())->lower());
+
+        $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
         $ManagerRegistry->getManager()->flush();
 

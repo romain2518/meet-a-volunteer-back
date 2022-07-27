@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *  "api_user_show"
      * })
      */
-    private $roles = [];
+    private $roles = ['ROLE_USER'];
 
     /**
      * @var string The hashed password
@@ -77,11 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=30, unique=true)
      * 
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *      min = 3,
-     *      max = 30
-     * )
      * 
      * @Groups({
      *  "api_user_list",
