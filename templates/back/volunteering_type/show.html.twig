@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}VolunteeringType{% endblock %}
+
+{% block body %}
+    <h1>VolunteeringType</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ volunteering_type.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ volunteering_type.name }}</td>
+            </tr>
+            <tr>
+                <th>SlugName</th>
+                <td>{{ volunteering_type.slugName }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ volunteering_type.createdAt ? volunteering_type.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ volunteering_type.updatedAt ? volunteering_type.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary" href="{{ path('app_back_volunteering_type_index') }}">back to list</a>
+
+    <a class="btn btn-success" href="{{ path('app_back_volunteering_type_edit', {'id': volunteering_type.id}) }}">edit</a>
+
+    {{ include('back/volunteering_type/_delete_form.html.twig') }}
+{% endblock %}

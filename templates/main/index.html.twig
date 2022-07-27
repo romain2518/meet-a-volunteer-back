@@ -1,20 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello World!{% endblock %}
+{% block title %}Meet a Volunteer{% endblock %}
 
 {% block body %} 
+<h1>Welcome to the back side of Meet a Volunteer ! ✅</h1>
 
+This friendly message is coming from:
+<ul>
+    <li>Romain</li>
+    <li>Lukas</li>
+    <li>Romain</li>
+</ul>
 
-<div class="example-wrapper">
-    <h1>Bienvenue sur Meet a Volunteer! ✅</h1>
-
-
-    This friendly message is coming from:
-    <ul>
-        <li>Romain</li>
-        <li>Lukas</li>
-        <li>Romain</li>
-        
-    </ul>
-</div>
+<a href="{{ path('app_back_main') }}">Dark side...</a>
 {% endblock %} 
