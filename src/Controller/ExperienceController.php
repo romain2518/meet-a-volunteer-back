@@ -37,17 +37,25 @@ class ExperienceController extends ApiController
      * 
      * methods={"GET"}, 
      * requirements={
-     *      "limit"="\d+",
-     *      "offset"="\d+"}
+     *      "id"="\d+",
+     *      }
      * )
      */
 
-    public function show(ExperienceRepository $experienceRepository, int $id): JsonResponse
+    public function show(Experience $experience = null): JsonResponse
     {
 
+        // ParamConverter convert the $id in an object (here $experience) and is used instead of experienceRepository->find($id)
+
+        if ($experience === null) {
+            return $this->json(
+                'Erreur: Experience not available',
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $this->json(
-            $experienceRepository->find($id),
+            $experience,
             Response::HTTP_OK,
             [],
             [
@@ -161,7 +169,7 @@ class ExperienceController extends ApiController
         if ($experience === null) {
             return $this->json(
                 'Erreur: Experience not available',
-                Response::HTTP_NOT_FOUND,
+                Response::HTTP_NOT_FOUND
             );
         }
 
@@ -202,7 +210,7 @@ class ExperienceController extends ApiController
 
             return $this->json(
                 'Erreur: Experience not available',
-                Response::HTTP_NOT_FOUND,
+                Response::HTTP_NOT_FOUND
             );
         }
 
@@ -266,8 +274,20 @@ class ExperienceController extends ApiController
     public function listByUser(ExperienceRepository $experienceRepository, UserRepository $userRepository, int $user_id, int $limit, int $offset): JsonResponse
     {
 
+        
+       $user = $userRepository->find($user_id);
+       
+       if ($user === null) 
+       {
         return $this->json(
-            $experienceRepository->findBy(["user" => $userRepository->find($user_id)], null, $limit, $offset),
+            'Erreur: User not found',
+            Response::HTTP_NOT_FOUND
+        );
+
+       }
+
+        return $this->json(
+            $experienceRepository->findBy(["user" => $user], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -377,9 +397,19 @@ class ExperienceController extends ApiController
     public function listByVolunteeringType(ExperienceRepository $experienceRepository, VolunteeringTypeRepository $volunteeringTypeRepository, int $id, int $limit, int $offset)
     {
 
+        $volunteeringTypeId = $volunteeringTypeRepository->find($id);
+
+        if ($volunteeringTypeId === null) {
+            
+            return $this->json(
+                'Erreur: VolunteeringType not found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         return $this->json(
 
-            $experienceRepository->findBy(["volunteeringType" => $volunteeringTypeRepository->find($id)], null, $limit, $offset),
+            $experienceRepository->findBy(["volunteeringType" => $volunteeringTypeId ], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -406,10 +436,17 @@ class ExperienceController extends ApiController
 
     public function listByReceptionStructure(ExperienceRepository $experienceRepository, ReceptionStructureRepository $receptionStructureRepository, int $id, int $limit, int $offset)
     {
+        $receptionStructure = $receptionStructureRepository->find($id);
 
+        if ($receptionStructure === null) {
+            return $this->json(
+                'Erreur: Reception structure not available',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+        
         return $this->json(
-
-            $experienceRepository->findBy(["receptionStructure" => $receptionStructureRepository->find($id)], null, $limit, $offset),
+            $experienceRepository->findBy(["receptionStructure" => $receptionStructure], null, $limit, $offset),
             Response::HTTP_OK,
             [],
             [
@@ -432,14 +469,14 @@ class ExperienceController extends ApiController
      * )
      */
 
-     
+
     public function listByThematic(int $limit, Thematic $thematic = null, int $offset)
     {
 
         if ($thematic === null) {
             return $this->json(
                 'Erreur: Thematic not available',
-                Response::HTTP_NOT_FOUND,
+                Response::HTTP_NOT_FOUND
             );
         }
 
