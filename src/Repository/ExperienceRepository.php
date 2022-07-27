@@ -39,6 +39,19 @@ class ExperienceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByRandom(int $limit, int $offset) : array
+    
+    {
+        return $this->getEntityManager()
+            ->createQuery("SELECT e FROM App\Entity\Experience e ORDER BY RAND()")
+            ->setMaxResults($offset)  
+            ->setFirstResult($limit) 
+            ->getResult();
+    }
+
+    
+
+
 //    /**
 //     * @return Experience[] Returns an array of Experience objects
 //     */
