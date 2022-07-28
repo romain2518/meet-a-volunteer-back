@@ -212,6 +212,9 @@ class UserController extends AbstractController
 
         $newUser->setPseudoSlug($slugger->slug($newUser->getPseudo())->lower());
         $newUser->setPassword($passwordHasher->hashPassword($newUser, $newUser->getPassword()));
+        $newUser->setRoles(['ROLE_USER']);
+        $newUser->setCreatedAt(null);
+        $newUser->setUpdatedAt(null);
 
         //faire l'insertion
         $userRepository->add($newUser, true);
@@ -260,6 +263,9 @@ class UserController extends AbstractController
             );
         }
 
+        $actualRoles = $user->getRoles();
+        $actualCreatedAt = $user->getCreatedAt();
+
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $jsonContent = $request->getContent();
@@ -272,8 +278,10 @@ class UserController extends AbstractController
         );
 
         $user->setPseudoSlug($slugger->slug($user->getPseudo())->lower());
-
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+        $user->setRoles($actualRoles);
+        $user->setCreatedAt($actualCreatedAt);
+
 
         $ManagerRegistry->getManager()->flush();
 
