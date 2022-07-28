@@ -242,7 +242,7 @@ class AppFixtures extends Fixture
                 $experience->setVolunteeringType($volunteeringTypes[array_rand($volunteeringTypes)]);
                 $experience->setReceptionStructure($receptionStructures[array_rand($receptionStructures)]);
 
-                $numberOfThematics = random_int(1, count($thematics));
+                $numberOfThematics = random_int(1, 3);
 
                 if ($numberOfThematics !== 1) { // If we want more than one item, we need an array of key
                     $thematicIndexes = array_rand($thematics, $numberOfThematics);
