@@ -112,7 +112,10 @@ class MessageController extends AbstractController
            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
        }
 
+       $newMessage->setIsRead(false);
        $newMessage->setUserSender($this->getUser());
+       $newMessage->setCreatedAt(null);
+       $newMessage->setUpdatedAt(null);
 
        //faire l'insertion
        $messageRepository->add($newMessage, true);
