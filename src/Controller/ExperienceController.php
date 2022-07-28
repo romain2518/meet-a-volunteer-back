@@ -180,6 +180,9 @@ class ExperienceController extends ApiController
             );
         }
 
+        $actualViewsCounter = $experience->getViews();
+        $actualCreatedAt = $experience->getCreatedAt();
+
         //If connected user is the writer
         $this->denyAccessUnlessGranted('EXPERIENCE_EDIT', $experience);
 
@@ -190,6 +193,8 @@ class ExperienceController extends ApiController
         $serializerInterface->deserialize($jsonContent, Experience::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $experience]);
 
         $experience->setSlugTitle($slugger->slug($experience->getTitle())->lower());
+        $experience->setViews($actualViewsCounter);
+        $experience->setCreatedAt($actualCreatedAt);
 
 
         $doctrine->getManager()->flush();
