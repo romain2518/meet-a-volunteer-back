@@ -222,7 +222,6 @@ class AppFixtures extends Fixture
                 $experience->setTitle($faker->realTextBetween(5, 100));
                 $experience->setSlugTitle($this->slugger->slug($experience->getTitle())->lower());
                 $experience->setCountry($faker->country());
-                $experience->setCity($faker->city());
                 $experience->setYear(random_int(1900, 2022));
                 $experience->setDuration($durationChoices[array_rand($durationChoices)]);
                 $experience->setFeedback($faker->realTextBetween(5, 1500));

@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ExperienceRepository::class)
- * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"country","city"})})
+ * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"country"})})
  * @ORM\HasLifecycleCallbacks
  */
 class Experience
@@ -81,23 +81,6 @@ class Experience
      * })
      */
     private $country;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * 
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *      min = 0,
-     *      max = 255
-     * )
-     * 
-     * @Groups({
-     *  "api_user_show",
-     *  "api_experience_list",
-     *  "api_experience_show"
-     * })
-     */
-    private $city;
 
     /**
      * @ORM\Column(type="integer")
@@ -329,18 +312,6 @@ class Experience
     public function setCountry(string $country): self
     {
         $this->country = $country;
-
-        return $this;
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): self
-    {
-        $this->city = $city;
 
         return $this;
     }
