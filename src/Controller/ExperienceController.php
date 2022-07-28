@@ -42,7 +42,7 @@ class ExperienceController extends ApiController
      * )
      */
 
-    public function show(Experience $experience = null): JsonResponse
+    public function show(Experience $experience = null, ManagerRegistry $doctrine): JsonResponse
     {
 
         // ParamConverter convert the $id in an object (here $experience) and is used instead of experienceRepository->find($id)
@@ -53,6 +53,10 @@ class ExperienceController extends ApiController
                 Response::HTTP_NOT_FOUND
             );
         }
+
+        // Add 1 view
+        $experience->setViews($experience->getViews() + 1);
+        $doctrine->getManager()->flush();
 
         return $this->json(
             $experience,
@@ -116,6 +120,9 @@ class ExperienceController extends ApiController
         }
 
         $newExperience->setSlugTitle($slugger->slug($newExperience->getTitle())->lower());
+        $newExperience->setViews(0);
+        $newExperience->setCreatedAt(null);
+        $newExperience->setUpdatedAt(null);
 
         // on utilise la version raccourcie par le repository
         // le paramètre true, nous fait le flush() auto

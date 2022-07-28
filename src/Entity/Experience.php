@@ -51,12 +51,6 @@ class Experience
     /**
      * @ORM\Column(type="string", length=100)
      * 
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *      min = 5,
-     *      max = 100
-     * )
-     * 
      * @Groups({
      *  "api_user_show",
      *  "api_experience_list",
@@ -136,7 +130,7 @@ class Experience
      *  "api_experience_show"
      * })
      */
-    private $views;
+    private $views = 0;
 
     /**
      * @ORM\Column(type="string", length=64, options={"default": "0.jpg"})
@@ -445,7 +439,7 @@ class Experience
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
