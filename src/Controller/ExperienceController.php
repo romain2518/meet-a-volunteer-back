@@ -72,7 +72,7 @@ class ExperienceController extends ApiController
     }
 
     /**
-     * @Route("/", name="add", methods={"POST"})
+     * @Route("", name="add", methods={"POST"})
      * @IsGranted("ROLE_USER")
      * 
      * 
