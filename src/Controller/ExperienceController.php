@@ -99,6 +99,7 @@ class ExperienceController extends ApiController
 
         try //essaye de deserializer la requête (= transformer l'objet JSON en Objet de l'entité donnée, ici Experience)
         {
+            /** @var Experience */
             $newExperience = $serializerInterface->deserialize($jsonContent, Experience::class, 'json');
         } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
         {
@@ -119,6 +120,7 @@ class ExperienceController extends ApiController
             return $this->json422($errors, $newExperience, 'api_experience_show');
         }
 
+        $newExperience->setUser($this->getUser());
         $newExperience->setSlugTitle($slugger->slug($newExperience->getTitle())->lower());
         $newExperience->setViews(0);
         $newExperience->setCreatedAt(null);
