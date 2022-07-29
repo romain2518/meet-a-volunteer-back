@@ -116,7 +116,7 @@ class Experience
      * )
      * 
      * @Groups({
-     *  "api_experience_show"
+     *  "api_experience_show",
      *  "api_experience_list"
      * })
      */
