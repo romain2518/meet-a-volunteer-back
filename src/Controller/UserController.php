@@ -6,23 +6,28 @@ use App\Entity\Experience;
 use App\Entity\User;
 use App\Repository\ExperienceRepository;
 use App\Repository\UserRepository;
+use App\Service\FileUploader;
+use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
-class UserController extends AbstractController
+class UserController extends ApiController
 {
     //? User list
     /**
@@ -194,12 +199,13 @@ class UserController extends AbstractController
 
          //vérifier ce que fournit l'user
          try{
-             $newUser = $serializerInterface->deserialize($jsonContent, User::class, 'json');
+            /** @var User */
+            $newUser = $serializerInterface->deserialize($jsonContent, User::class, 'json');
          }
 
          catch(Exception $e)
          {
-            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
+            return $this->json(["Error bad request", $e], Response::HTTP_BAD_REQUEST);
          }
     
          //valider les infos
@@ -215,6 +221,7 @@ class UserController extends AbstractController
         $newUser->setRoles(['ROLE_USER']);
         $newUser->setCreatedAt(null);
         $newUser->setUpdatedAt(null);
+        $newUser->setProfilePicture('0.jpg');
 
         //faire l'insertion
         $userRepository->add($newUser, true);
@@ -240,49 +247,79 @@ class UserController extends AbstractController
      //? edit User
      /**
      * @Route("/api/user/{id}",name="api_user_edit", 
-     *      methods={"PUT", "PATCH"},
+     *      methods={"PUT", "PATCH", "POST"},
      *      requirements={"id"="\d+"})
      */
     public function edit(
         User $user = null,
         Request $request,
         ManagerRegistry $ManagerRegistry,
-        SerializerInterface $serializerInterface,
         SluggerInterface $slugger,
-        UserPasswordHasherInterface $passwordHasher
+        ValidatorInterface $validator,
+        FileUploader $fileUploader,
+        Filesystem $fileSystem
         ): JsonResponse
     {
-        if ($user === null)
-        {
-            // on renvoie donc une 404
-            return $this->json(
-                [
-                    "Error: user not found"
-                ],
-                Response::HTTP_NOT_FOUND,// 404
-            );
-        }
+        //? Case Experience not found
+        if ($user === null) {return $this->json("Error: user not found", Response::HTTP_NOT_FOUND);}
 
+        //? Saving non-modifiable datas
         $actualRoles = $user->getRoles();
+        $actualPassword = $user->getPassword();
         $actualCreatedAt = $user->getCreatedAt();
+        $actualPicture = $user->getProfilePicture();
 
+        //? If connected user is the wanted user
         $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
-        $jsonContent = $request->getContent();
+        //? Accessing and denormalizing new datas
+        $requestContent = $request->request->all();
 
-        $serializerInterface->deserialize(
-            $jsonContent,
-            User::class, 
-            'json', 
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $user]
-        );
+        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+        // @see https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
 
+        try {
+            if (!empty($requestContent['age'])) {
+                $requestContent['age'] = new DateTime($requestContent['age']);
+            } else {
+                unset($requestContent['age']);
+            }
+
+            $normalizer->denormalize($requestContent, User::class, null, [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+        } catch (Exception $e) {
+            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
+        }
+
+        //? Validating datas
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            return $this->json422($errors, $user, 'api_user_show');
+        }
+
+        //? Setting non-modifiable values
         $user->setPseudoSlug($slugger->slug($user->getPseudo())->lower());
-        $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+        $user->setPassword($actualPassword);
         $user->setRoles($actualRoles);
         $user->setCreatedAt($actualCreatedAt);
+        $user->setProfilePicture($actualPicture);
 
+        //? File management
+        if (!empty($request->files->get('pictureFile'))) {
+            $file = $request->files->get('pictureFile');
 
+            $uploadResponse = $fileUploader->upload($file, 'user');
+            if ($uploadResponse['isFailed']) {
+               return $this->json($uploadResponse['error'], $uploadResponse['responseCode']);
+            }
+
+            if ($user->getProfilePicture() !== '0.jpg') {
+                $fileSystem->remove('images/pp/' . $user->getProfilePicture());
+            }
+    
+            $user->setProfilePicture($uploadResponse['filename']);
+        }
+
+        //? Saving
         $ManagerRegistry->getManager()->flush();
 
         return $this->json(
@@ -297,8 +334,6 @@ class UserController extends AbstractController
                     'api_user_show'
                 ]
             ]
-                );
-
+        );
     }
-
 }
