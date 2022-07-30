@@ -103,10 +103,24 @@ class ExperienceController extends ApiController
 
         try {
             // Manually converting ids to objects for relations
-            $requestContent['volunteeringType'] = $volunteeringTypeRepository->find(intval($requestContent['volunteeringType']));
-            $requestContent['receptionStructure'] = $receptionStructureRepository->find(intval($requestContent['receptionStructure']));
-            foreach ($requestContent['thematic'] as $key => $thematic) {
-                $requestContent['thematic'][$key] = $thematicRepository->find(intval($thematic));
+            if (!empty($requestContent['volunteeringType'])) {
+                $requestContent['volunteeringType'] = $volunteeringTypeRepository->find(intval($requestContent['volunteeringType']));
+            } else {
+                unset($requestContent['volunteeringType']);
+            }
+
+            if (!empty($requestContent['receptionStructure'])) {
+                $requestContent['receptionStructure'] = $receptionStructureRepository->find(intval($requestContent['receptionStructure']));
+            } else {
+                unset($requestContent['receptionStructure']);
+            }
+
+            if (!empty($requestContent['thematic']) && is_array($requestContent['thematic'])) {
+                foreach ($requestContent['thematic'] as $key => $thematic) {
+                    $requestContent['thematic'][$key] = $thematicRepository->find(intval($thematic));
+                }
+            } else {
+                unset($requestContent['thematic']);
             }
 
             // Creating object
@@ -178,6 +192,9 @@ class ExperienceController extends ApiController
     public function edit(
         Experience $experience = null,
         Request $request,
+        VolunteeringTypeRepository $volunteeringTypeRepository,
+        ReceptionStructureRepository $receptionStructureRepository,
+        ThematicRepository $thematicRepository,
         SluggerInterface $slugger,
         ValidatorInterface $validator,
         ManagerRegistry $doctrine,
@@ -202,6 +219,27 @@ class ExperienceController extends ApiController
         // @see https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
 
         try {
+            // Manually converting ids to objects for relations
+            if (!empty($requestContent['volunteeringType'])) {
+                $requestContent['volunteeringType'] = $volunteeringTypeRepository->find(intval($requestContent['volunteeringType']));
+            } else {
+                unset($requestContent['volunteeringType']);
+            }
+
+            if (!empty($requestContent['receptionStructure'])) {
+                $requestContent['receptionStructure'] = $receptionStructureRepository->find(intval($requestContent['receptionStructure']));
+            } else {
+                unset($requestContent['receptionStructure']);
+            }
+
+            if (!empty($requestContent['thematic']) && is_array($requestContent['thematic'])) {
+                foreach ($requestContent['thematic'] as $key => $thematic) {
+                    $requestContent['thematic'][$key] = $thematicRepository->find(intval($thematic));
+                }
+            } else {
+                unset($requestContent['thematic']);
+            }
+
             $normalizer->denormalize($requestContent, Experience::class, null, [AbstractNormalizer::OBJECT_TO_POPULATE => $experience]);
         } catch (Exception $e) {
             return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
