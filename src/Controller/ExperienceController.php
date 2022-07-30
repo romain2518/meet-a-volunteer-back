@@ -87,59 +87,69 @@ class ExperienceController extends ApiController
 
     public function add(
         ExperienceRepository $experienceRepository,
+        VolunteeringTypeRepository $volunteeringTypeRepository,
+        ReceptionStructureRepository $receptionStructureRepository,
+        ThematicRepository $thematicRepository,
         Request $request,
-        SerializerInterface $serializerInterface,
         ValidatorInterface $validator,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        FileUploader $fileUploader
     ): JsonResponse {
+        //? Accessing and denormalizing new datas
+        $requestContent = $request->request->all();
 
+        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+        // @see https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
 
-        //Je récupère le contenu de la requête via request->getContent
-        $jsonContent = $request->getContent();
+        try {
+            // Manually converting ids to objects for relations
+            $requestContent['volunteeringType'] = $volunteeringTypeRepository->find(intval($requestContent['volunteeringType']));
+            $requestContent['receptionStructure'] = $receptionStructureRepository->find(intval($requestContent['receptionStructure']));
+            foreach ($requestContent['thematic'] as $key => $thematic) {
+                $requestContent['thematic'][$key] = $thematicRepository->find(intval($thematic));
+            }
 
-        // pour désérialiser il nous faut le composant de serialisation
-        // on l'obtient avec le service SerializerInterface
-        //! faire attention à ce que nous fournit l'utilisateur !!!!!
-
-        try //essaye de deserializer la requête (= transformer l'objet JSON en Objet de l'entité donnée, ici Experience)
-        {
-            /** @var Experience */
-            $newExperience = $serializerInterface->deserialize($jsonContent, Experience::class, 'json');
-        } catch (Exception $e) //Si le Try ne se déroule pas correctement on renvoie une exception
-        {
-            // dd($e);
-            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
+            // Creating object
+            $newExperience = new Experience();
+            $normalizer->denormalize($requestContent, Experience::class, null, [AbstractNormalizer::OBJECT_TO_POPULATE => $newExperience]);
+        } catch (Exception $e) {
+            return $this->json(["Error bad request". $e], Response::HTTP_BAD_REQUEST);
         }
 
-        //Il nous faut ensuite vérifier les infos fournis par l'utilisateur, ici nous n'avons pas de formulaire qui aurait pu contraindre les réponses de 
-        // l'utilsateur $form->IsValid, on utilise donc le validator de Symfony.
-
+        //? Validating datas
         $errors = $validator->validate($newExperience);
-
         if (count($errors) > 0) {
-
-            //j'utilise une méthode qui me permettra de récupérer un message en string et non un objet comme l'aurait naturellement fait un return avec $errors
-
-            // dd($newExperience);
             return $this->json422($errors, $newExperience, 'api_experience_show');
         }
 
+        //? Setting non-modifiable
         $newExperience->setUser($this->getUser());
         $newExperience->setSlugTitle($slugger->slug($newExperience->getTitle())->lower());
         $newExperience->setViews(0);
         $newExperience->setCreatedAt(null);
         $newExperience->setUpdatedAt(null);
+        $newExperience->setPicture('0.jpg');
 
-        // on utilise la version raccourcie par le repository
-        // le paramètre true, nous fait le flush() auto
-        // ça correspond à persist() ET flush()
+        //? File management
+        if (!empty($request->files->get('pictureFile'))) {
+            $file = $request->files->get('pictureFile');
+
+            $uploadResponse = $fileUploader->upload($file, 'experience');
+            if ($uploadResponse['isFailed']) {
+               return $this->json($uploadResponse['error'], $uploadResponse['responseCode']);
+            }
+    
+            $newExperience->setPicture($uploadResponse['filename']);
+        }
+
+        //? Saving
         $experienceRepository->add($newExperience, true);
 
+        //? Returning JSON response
         return $this->json(
             $newExperience,
             Response::HTTP_CREATED,
             [
-
                 'Location' => $this->generateUrl('api_experiences_list_by_user', ['user_id' => $newExperience->getUser()->getId(), 'limit' => 20, 'offset' => 0])
             ],
             [
@@ -148,9 +158,6 @@ class ExperienceController extends ApiController
                     'api_experience_show'
                 ]
             ]
-
-
-
         );
     }
 
@@ -209,6 +216,7 @@ class ExperienceController extends ApiController
         //? Setting non-modifiable datas back
         $experience->setSlugTitle($slugger->slug($experience->getTitle())->lower());
         $experience->setViews($actualViewsCounter);
+        $experience->setUser($this->getUser());
         $experience->setCreatedAt($actualCreatedAt);
         $experience->setPicture($actualPicture);
 
