@@ -205,7 +205,7 @@ class UserController extends ApiController
 
          catch(Exception $e)
          {
-            return $this->json(["Error bad request", $e], Response::HTTP_BAD_REQUEST);
+            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
          }
     
          //valider les infos
