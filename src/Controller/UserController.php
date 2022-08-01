@@ -221,7 +221,7 @@ class UserController extends ApiController
         $newUser->setRoles(['ROLE_USER']);
         $newUser->setCreatedAt(null);
         $newUser->setUpdatedAt(null);
-        $newUser->setProfilePicture('0.jpg');
+        $newUser->setProfilePicture('0.png');
 
         //faire l'insertion
         $userRepository->add($newUser, true);
@@ -312,7 +312,7 @@ class UserController extends ApiController
                return $this->json($uploadResponse['error'], $uploadResponse['responseCode']);
             }
 
-            if ($user->getProfilePicture() !== '0.jpg') {
+            if ($user->getProfilePicture() !== '0.png') {
                 $fileSystem->remove('images/pp/' . $user->getProfilePicture());
             }
     
