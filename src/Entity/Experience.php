@@ -134,7 +134,7 @@ class Experience
     private $views = 0;
 
     /**
-     * @ORM\Column(type="string", length=64, options={"default": "0.jpg"})
+     * @ORM\Column(type="string", length=64)
      * 
      * @Groups({
      *  "api_user_show",
@@ -142,7 +142,7 @@ class Experience
      *  "api_experience_show"
      * })
      */
-    private $picture;
+    private $picture = '0.png';
 
     /**
      * @ORM\Column(type="integer", options={"unsigned"=true})
