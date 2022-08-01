@@ -185,12 +185,28 @@ class Experience
 
     /**
      * @ORM\Column(type="json")
-     * 
-     * @Assert\NotBlank
      * @Assert\Count(
      *      min = 1,
      *      max = 2
-     * )
+     *  )
+     * 
+     * @Assert\Unique
+     * 
+     * @Assert\All({
+     *      @Assert\NotBlank,
+     *      @Assert\Choice({
+     *       "English",
+     *       "Spanish",
+     *       "German",
+     *       "French",
+     *       "Mandarin Chinese",
+     *       "Arabic",
+     *       "Portuguese",
+     *       "Japanese",
+     *       "Vietnamese",
+     *       "Thaï"
+     *      })
+     * })
      * 
      * @Groups({
      *  "api_experience_show"
