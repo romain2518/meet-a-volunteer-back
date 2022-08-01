@@ -142,7 +142,7 @@ class ExperienceController extends ApiController
         $newExperience->setViews(0);
         $newExperience->setCreatedAt(null);
         $newExperience->setUpdatedAt(null);
-        $newExperience->setPicture('0.jpg');
+        $newExperience->setPicture('0.png');
 
         //? File management
         if (!empty($request->files->get('pictureFile'))) {
@@ -267,7 +267,7 @@ class ExperienceController extends ApiController
                return $this->json($uploadResponse['error'], $uploadResponse['responseCode']);
             }
 
-            if ($experience->getPicture() !== '0.jpg') {
+            if ($experience->getPicture() !== '0.png') {
                 $fileSystem->remove('images/experiencePicture/' . $experience->getPicture());
             }
     
