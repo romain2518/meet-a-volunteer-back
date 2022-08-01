@@ -127,7 +127,7 @@ class ExperienceController extends ApiController
             $newExperience = new Experience();
             $normalizer->denormalize($requestContent, Experience::class, null, [AbstractNormalizer::OBJECT_TO_POPULATE => $newExperience]);
         } catch (Exception $e) {
-            return $this->json(["Error bad request". $e], Response::HTTP_BAD_REQUEST);
+            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
         }
 
         //? Validating datas
