@@ -145,7 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $age;
 
     /**
-     * @ORM\Column(type="string", length=64, options={"default": "0.jpg"}))
+     * @ORM\Column(type="string", length=64)
      * 
      * @Groups({
      *  "api_user_list",
@@ -156,7 +156,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *  "api_experience_show"
      * })
      */
-    private $profilePicture;
+    private $profilePicture = '0.png';
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
