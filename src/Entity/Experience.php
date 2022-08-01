@@ -157,7 +157,7 @@ class Experience
      *  "api_experience_show"
      * })
      */
-    private $participation_fee;
+    private $participationFee;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -373,12 +373,12 @@ class Experience
 
     public function getParticipationFee(): ?int
     {
-        return $this->participation_fee;
+        return $this->participationFee;
     }
 
-    public function setParticipationFee(int $participation_fee): self
+    public function setParticipationFee(int $participationFee): self
     {
-        $this->participation_fee = $participation_fee;
+        $this->participationFee = $participationFee;
 
         return $this;
     }
