@@ -11,6 +11,7 @@ use App\Entity\Experience;
 use App\Entity\Thematic;
 use App\Repository\VolunteeringTypeRepository;
 use App\Service\FileUploader;
+use App\Service\RestCountriesApi;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * @Route("api/experiences",name="api_experiences_")
@@ -93,7 +95,8 @@ class ExperienceController extends ApiController
         Request $request,
         ValidatorInterface $validator,
         SluggerInterface $slugger,
-        FileUploader $fileUploader
+        FileUploader $fileUploader,
+        RestCountriesApi $restCountriesApi
     ): JsonResponse {
         //? Accessing and denormalizing new datas
         $requestContent = $request->request->all();
@@ -132,8 +135,10 @@ class ExperienceController extends ApiController
 
         //? Validating datas
         $errors = $validator->validate($newExperience);
-        if (count($errors) > 0) {
-            return $this->json422($errors, $newExperience, 'api_experience_show');
+        $isCountryValid = $restCountriesApi->checkCountry($newExperience->getCountry());
+
+        if (count($errors) > 0 || !$isCountryValid) {
+            return $this->json422($errors, $newExperience, 'api_experience_show', !$isCountryValid ? 'This country is not a valid choice.' : null);
         }
 
         //? Setting non-modifiable
@@ -199,7 +204,8 @@ class ExperienceController extends ApiController
         ValidatorInterface $validator,
         ManagerRegistry $doctrine,
         FileUploader $fileUploader,
-        Filesystem $fileSystem
+        Filesystem $fileSystem,
+        RestCountriesApi $restCountriesApi
     ): JsonResponse {
         //? Case Experience not found
         if ($experience === null) {return $this->json('Error: Experience not found',Response::HTTP_NOT_FOUND);}
@@ -247,8 +253,10 @@ class ExperienceController extends ApiController
 
         //? Validating datas
         $errors = $validator->validate($experience);
-        if (count($errors) > 0) {
-            return $this->json422($errors, $experience, 'api_experience_show');
+        $isCountryValid = $restCountriesApi->checkCountry($experience->getCountry());
+
+        if (count($errors) > 0 || !$isCountryValid) {
+            return $this->json422($errors, $experience, 'api_experience_show', !$isCountryValid ? 'This country is not a valid choice.' : null);
         }
 
         //? Setting non-modifiable datas back

@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\ExperienceRepository;
 use App\Repository\UserRepository;
 use App\Service\FileUploader;
+use App\Service\RestCountriesApi;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
@@ -170,50 +171,50 @@ class UserController extends ApiController
             );
     }
 
-     //? create user
-     /**
-      * @Route(
-      * "/api/user",
-      * name="api_user_create",
-      * methods={"POST"},
-      * )
-      * 
-      * @param Request $request
-      * @param UserRepository $userRepository
-      * @param SerializerInterface $serializerInterface
-      * @param ValidatorInterface $validatorInterface
-      * @return JsonResponse
+    //? create user
+    /**
+     * @Route(
+     * "/api/user",
+     * name="api_user_create",
+     * methods={"POST"},
+     * )
+     * 
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validatorInterface
+     * @return JsonResponse
+    */
+    public function create(
+        Request $request,
+        SerializerInterface $serializerInterface,
+        UserRepository $userRepository,
+        ValidatorInterface $validatorInterface,
+        SluggerInterface $slugger,
+        UserPasswordHasherInterface $passwordHasher,
+        RestCountriesApi $restCountriesApi
+    ): JsonResponse
+    {
+        //récupérer le contenu JSON
+        $jsonContent = $request->getContent();
 
-      */
-     public function create(
-         Request $request,
-         SerializerInterface $serializerInterface,
-         UserRepository $userRepository,
-         ValidatorInterface $validatorInterface,
-         SluggerInterface $slugger,
-         UserPasswordHasherInterface $passwordHasher
-     ): JsonResponse
-     {
-         //récupérer le contenu JSON
-         $jsonContent = $request->getContent();
+        //vérifier ce que fournit l'user
+        try{
+        /** @var User */
+        $newUser = $serializerInterface->deserialize($jsonContent, User::class, 'json');
+        }
 
-         //vérifier ce que fournit l'user
-         try{
-            /** @var User */
-            $newUser = $serializerInterface->deserialize($jsonContent, User::class, 'json');
-         }
-
-         catch(Exception $e)
-         {
-            return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
-         }
-    
-         //valider les infos
-         $errors = $validatorInterface->validate($newUser);
-
-         if (count($errors)> 0)
+        catch(Exception $e)
         {
-            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->json("Error bad request", Response::HTTP_BAD_REQUEST);
+        }
+
+        //valider les infos
+        $errors = $validatorInterface->validate($newUser);
+        $isCountryValid = $restCountriesApi->checkCountry($newUser->getNativeCountry());
+
+        if (count($errors) > 0 || !$isCountryValid) {
+            return $this->json422($errors, $newUser, 'api_user_show', !$isCountryValid ? 'This country is not a valid choice.' : null);
         }
 
         $newUser->setPseudoSlug($slugger->slug($newUser->getPseudo())->lower());
@@ -242,7 +243,7 @@ class UserController extends ApiController
             ]
         );
 
-     }
+    }
 
      //? edit User
      /**
@@ -257,7 +258,8 @@ class UserController extends ApiController
         SluggerInterface $slugger,
         ValidatorInterface $validator,
         FileUploader $fileUploader,
-        Filesystem $fileSystem
+        Filesystem $fileSystem,
+        RestCountriesApi $restCountriesApi
         ): JsonResponse
     {
         //? Case Experience not found
@@ -292,8 +294,10 @@ class UserController extends ApiController
 
         //? Validating datas
         $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            return $this->json422($errors, $user, 'api_user_show');
+        $isCountryValid = $restCountriesApi->checkCountry($user->getNativeCountry());
+
+        if (count($errors) > 0 || !$isCountryValid) {
+            return $this->json422($errors, $user, 'api_user_show', !$isCountryValid ? 'This country is not a valid choice.' : null);
         }
 
         //? Setting non-modifiable values
