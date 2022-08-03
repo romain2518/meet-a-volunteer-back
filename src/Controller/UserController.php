@@ -70,7 +70,7 @@ class UserController extends ApiController
      */
     public function listMostExperienced(UserRepository $userRepository, int $limit, int $offset, Connection $connection): JsonResponse
      {
-         $sql = 'SELECT u.`id`, `pseudo`, `roles`, `pseudo_slug`, `firstname`, `lastname`, `age`, `profile_picture`, `email`, `phone`, `biography`, `native_country`, u.`created_at`, u.`updated_at`, COUNT(e.id) expCounter
+         $sql = 'SELECT u.`id`, `pseudo`, `roles`, `pseudo_slug` `pseudoSlug`, `firstname`, `lastname`, `age`, `profile_picture` `profilePicture` , `email`, `phone`, `biography`, `native_country` `nativeCountry`, u.`created_at` `createdAt`, u.`updated_at` `updatedAt`, COUNT(e.id) expCounter
          FROM user u
          INNER JOIN experience e
          ON user_id = u.id
