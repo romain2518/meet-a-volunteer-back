@@ -40,6 +40,7 @@ class JWTCreatedListener
 
 		$payload = $event->getData();
         $payload['id'] = $userByEntity->getId();
+        $payload['profilePicture'] = $userByEntity->getProfilePicture();
 
 		$event->setData($payload);
 
