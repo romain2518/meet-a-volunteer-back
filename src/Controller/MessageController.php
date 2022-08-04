@@ -149,7 +149,7 @@ class MessageController extends AbstractController
     {
         if ($message === null) {return $this->json('Error: Message not found...', Response::HTTP_NOT_FOUND,);}
 
-        $this->denyAccessUnlessGranted('MESSAGE_EDIT', $message);
+        $this->denyAccessUnlessGranted('MESSAGE_SET_READ', $message);
 
         $message->setIsRead(true);
         
@@ -179,7 +179,7 @@ class MessageController extends AbstractController
     {
         if ($message === null) {return $this->json('Error: Message not found...', Response::HTTP_NOT_FOUND,);}
         
-        $this->denyAccessUnlessGranted('MESSAGE_EDIT', $message);
+        $this->denyAccessUnlessGranted('MESSAGE_SET_READ', $message);
 
         $message->setIsRead(false);
         
