@@ -226,7 +226,7 @@ class AppFixtures extends Fixture
                 $experience->setDuration($durationChoices[array_rand($durationChoices)]);
                 $experience->setFeedback($faker->realTextBetween(5, 1500));
                 $experience->setViews(random_int(0, 5000));
-                $experience->setPicture(random_int(1, 50) . '.png');
+                $experience->setPicture(random_int(1, 50) . '.jpg');
                 $experience->setParticipationFee(random_int(0, 4000000));
                 $experience->setIsHosted($choices[array_rand($choices)]);
                 $experience->setIsFed($choices[array_rand($choices)]);
