@@ -43,7 +43,7 @@ class DownloadPicturesCommand extends Command
         //? Experience pictures
         $experienceProgressBar = new ProgressBar($output, 50);
 
-        for ($i=1; $i < 50; $i++) { 
+        for ($i=1; $i < 51; $i++) { 
             $content = file_get_contents("https://picsum.photos/500/350");
     
             //Store in the filesystem.
