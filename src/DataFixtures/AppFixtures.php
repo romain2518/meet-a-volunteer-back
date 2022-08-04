@@ -94,7 +94,7 @@ class AppFixtures extends Fixture
         $user->setFirstname($faker->firstName());
         $user->setLastname($faker->lastName());
         $user->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
-        $user->setProfilePicture('0.png');
+        $user->setProfilePicture('1.jfif');
         $user->setEmail($faker->email());
         $user->setPhone($faker->phoneNumber());
         $user->setBiography($faker->realText(random_int(10, 250)));
@@ -113,7 +113,7 @@ class AppFixtures extends Fixture
         $moderator->setFirstname($faker->firstName());
         $moderator->setLastname($faker->lastName());
         $moderator->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
-        $moderator->setProfilePicture('0.png');
+        $moderator->setProfilePicture('2.jfif');
         $moderator->setEmail($faker->email());
         $moderator->setPhone($faker->phoneNumber());
         $moderator->setBiography($faker->realText(random_int(10, 250)));
@@ -132,7 +132,7 @@ class AppFixtures extends Fixture
         $admin->setFirstname($faker->firstName());
         $admin->setLastname($faker->lastName());
         $admin->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
-        $admin->setProfilePicture('0.png');
+        $admin->setProfilePicture('3.jfif');
         $admin->setEmail($faker->email());
         $admin->setPhone($faker->phoneNumber());
         $admin->setBiography($faker->realText(random_int(10, 250)));
@@ -141,7 +141,7 @@ class AppFixtures extends Fixture
         $users[] = $admin;
         $manager->persist($admin);
 
-        for ($i=1; $i <= 30; $i++) { 
+        for ($i=4; $i <= 30; $i++) { 
             $user = new User();
 
             $user->setPseudo('Member #' . $i);
@@ -151,7 +151,7 @@ class AppFixtures extends Fixture
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setAge($faker->dateTimeBetween('-100 years', '-13 years'));
-            $user->setProfilePicture('0.png');
+            $user->setProfilePicture($i . '.jfif');
             $user->setEmail($faker->email());
             $user->setPhone($faker->phoneNumber());
             $user->setBiography($faker->realText(random_int(10, 250)));
@@ -226,7 +226,7 @@ class AppFixtures extends Fixture
                 $experience->setDuration($durationChoices[array_rand($durationChoices)]);
                 $experience->setFeedback($faker->realTextBetween(5, 1500));
                 $experience->setViews(random_int(0, 5000));
-                $experience->setPicture('0.png');
+                $experience->setPicture(random_int(1, 50) . '.png');
                 $experience->setParticipationFee(random_int(0, 4000000));
                 $experience->setIsHosted($choices[array_rand($choices)]);
                 $experience->setIsFed($choices[array_rand($choices)]);
