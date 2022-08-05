@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @Route("/back/thematic")
@@ -28,13 +29,15 @@ class ThematicController extends AbstractController
     /**
      * @Route("/new", name="app_back_thematic_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, ThematicRepository $thematicRepository): Response
+    public function new(Request $request, ThematicRepository $thematicRepository, SluggerInterface $slugger): Response
     {
         $thematic = new Thematic();
         $form = $this->createForm(ThematicType::class, $thematic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $thematic->setSlugName($slugger->slug($thematic->getName())->lower());
+
             $thematicRepository->add($thematic, true);
 
             return $this->redirectToRoute('app_back_thematic_index', [], Response::HTTP_SEE_OTHER);
@@ -59,12 +62,14 @@ class ThematicController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_back_thematic_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, Thematic $thematic, ThematicRepository $thematicRepository): Response
+    public function edit(Request $request, Thematic $thematic, ThematicRepository $thematicRepository, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ThematicType::class, $thematic);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $thematic->setSlugName($slugger->slug($thematic->getName())->lower());
+            
             $thematicRepository->add($thematic, true);
 
             return $this->redirectToRoute('app_back_thematic_index', [], Response::HTTP_SEE_OTHER);

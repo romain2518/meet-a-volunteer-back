@@ -13,7 +13,6 @@ class VolunteeringTypeType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('slugName')
         ;
     }
 

@@ -13,7 +13,6 @@ class ThematicType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('slugName')
         ;
     }
 

@@ -23,7 +23,6 @@ class UserType extends AbstractType
                 'expanded' => false,
                 'multiple' => true
             ])
-            ->add('pseudoSlug')
         ;
     }
 

@@ -54,12 +54,6 @@ class Thematic
     /**
      * @ORM\Column(type="string", length=64, unique=true)
      * 
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *      min = 5,
-     *      max = 64
-     * )
-     * 
      * @Groups({
      *  "api_user_show",
      *  "api_experience_list",

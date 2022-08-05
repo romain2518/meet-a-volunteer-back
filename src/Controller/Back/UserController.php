@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @Route("/back/user")
@@ -38,12 +39,14 @@ class UserController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_back_user_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, User $user, UserRepository $userRepository): Response
+    public function edit(Request $request, User $user, UserRepository $userRepository, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPseudoSlug($slugger->slug($user->getPseudo())->lower());
+
             $userRepository->add($user, true);
 
             return $this->redirectToRoute('app_back_user_index', [], Response::HTTP_SEE_OTHER);

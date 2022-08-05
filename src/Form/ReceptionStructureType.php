@@ -13,7 +13,6 @@ class ReceptionStructureType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('slugName')
         ;
     }
 
