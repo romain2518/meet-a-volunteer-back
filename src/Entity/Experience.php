@@ -60,12 +60,12 @@ class Experience
     private $slugTitle;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=190)
      * 
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 0,
-     *      max = 255
+     *      max = 190
      * )
      * 
      * @Groups({
